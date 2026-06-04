@@ -1,4 +1,5 @@
-import { Button, Form, Input, Divider, Card } from "antd";
+import { Button, Form, Input, Divider, Card, Space } from "antd";
+import { LinkButton } from "../../components/link";
 
 const Signup = () => {
   const [form] = Form.useForm();
@@ -10,13 +11,13 @@ const Signup = () => {
 
   return (
     <>
-      <Form
-        form={form}
-        onFinish={handleSubmit}
-        layout="vertical"
-        style={{ maxWidth: 360 }}
-      >
-        <Card>
+      <Card>
+        <Form
+          form={form}
+          onFinish={handleSubmit}
+          layout="vertical"
+          style={{ width: 360 }}
+        >
           <Divider>Sign Up</Divider>
           <Form.Item
             label="Email"
@@ -48,17 +49,25 @@ const Signup = () => {
               placeholder={"Enter confirm password"}
             />
           </Form.Item>
-          <Form.Item>
-            <Button
-              variant="solid"
-              color="primary"
-              htmlType="submit"
-            >
-              Login
-            </Button>
+          <Form.Item wrapperCol={{ span: 24 }}>
+            <Space style={{ width: "100%", justifyContent: "space-between" }}>
+              <Button
+                variant="solid"
+                color="primary"
+                htmlType="submit"
+              >
+                Login
+              </Button>
+              <LinkButton
+                to="/login"
+                type="primary"
+              >
+                Existing user?
+              </LinkButton>
+            </Space>
           </Form.Item>
-        </Card>
-      </Form>
+        </Form>
+      </Card>
     </>
   );
 };

@@ -1,8 +1,8 @@
-import { Button, Form, Input, Divider, Card } from "antd";
+import { Button, Form, Input, Divider, Card, Space } from "antd";
+import { LinkButton } from "../../components/link";
 
 const Login = () => {
   const [form] = Form.useForm();
-  // const email = Form.useWatch("email", form);
   const handleSubmit = () => {
     form.setFieldsValue({ password: "1111" });
     form.setFieldValue("email", "hemantbhaqqt");
@@ -10,13 +10,12 @@ const Login = () => {
 
   return (
     <>
-      <Form
-        form={form}
-        onFinish={handleSubmit}
-        layout="vertical"
-        style={{ maxWidth: 360 }}
-      >
-        <Card>
+      <Card style={{ width: 360 }}>
+        <Form
+          form={form}
+          onFinish={handleSubmit}
+          layout="vertical"
+        >
           <Divider>Login</Divider>
           <Form.Item
             label="Email"
@@ -38,17 +37,20 @@ const Login = () => {
               placeholder={"Enter password"}
             />
           </Form.Item>
-          <Form.Item>
-            <Button
-              variant="solid"
-              color="primary"
-              htmlType="submit"
-            >
-              Login
-            </Button>
+          <Form.Item wrapperCol={{ span: 24 }}>
+            <Space style={{ width: "100%", justifyContent: "space-between" }}>
+              <Button
+                variant="solid"
+                color="primary"
+                htmlType="submit"
+              >
+                Login
+              </Button>
+              <LinkButton to="/signup">New user?</LinkButton>
+            </Space>
           </Form.Item>
-        </Card>
-      </Form>
+        </Form>
+      </Card>
     </>
   );
 };
