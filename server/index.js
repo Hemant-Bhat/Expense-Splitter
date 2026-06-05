@@ -1,13 +1,14 @@
 import e from "express";
 import mongoose from "mongoose";
+import env from 'dotenv'
 
 import authRouter from "./routes/auth.js";
 
 
-
+env.config();
 const app = e();
 const PORT = 3000;  
-const URI = "mongodb+srv://expense-splitter:expense-splitter@atlascluster.ymd6it1.mongodb.net/"
+const URI = process.env.MONGO_URI
 
 app.use(e.json());
 app.use('/auth', authRouter);
