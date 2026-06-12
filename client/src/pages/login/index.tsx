@@ -4,8 +4,8 @@ import { LinkButton } from "../../components/link";
 const Login = () => {
   const [form] = Form.useForm();
   const handleSubmit = () => {
-    form.setFieldsValue({ password: "1111" });
-    form.setFieldValue("email", "hemantbhaqqt");
+    const { email, password } = form.getFieldsValue();
+    console.log()
   };
 
   return (
