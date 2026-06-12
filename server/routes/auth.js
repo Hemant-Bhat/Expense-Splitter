@@ -1,5 +1,6 @@
 import { Router } from "express";
 import bcrypt from 'bcryptjs';
+import jwt  from "jsonwebtoken";
 
 import User from "../models/user.model.js";
 import { validate } from "../middleware/validate.js";
@@ -36,8 +37,15 @@ router.post('/login', validate(loginSchema), async (req, res) => {
         if(!isValid) {
             return res.json({ ...ERROR.INVALID_CREDENTIAL, actualError: 'Incorrect password'});
         }
+        const token = jwt.sign({ userId: existingUser._id, user: existingUser.email,  }, process.env.JWT_SECRET_KEY, { 
+            expiresIn: '1h'
+        })
 
-        res.send(existingUser);
+        res.cookie('token', token, { 
+            expires: new Date(Date.now() + 60 * 60 * 1000),
+            httpOnly: true
+
+        }).status(200).json({ success: true });
 
     } catch (error) {
         res.json({ error: true, message: error.message })
@@ -49,16 +57,14 @@ router.post('/signup', validate(registerSchema) ,async (req, res) => {
         const { email, password, confirmPassword } = req.body;
 
         const existingUser = await User.findOne({ email });
-        console.log({ existingUser })
 
         if(existingUser){
             return res.status(409).json(ERROR.DUPLICATE_EMAIL);
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
-
         const user = new User({ email, password: hashPassword });
-        const h = await user.save();
+        await user.save();
 
         return res.status(201).json({ success: true, message: "User Created Successfully" });
     } catch (error) {
