@@ -10,15 +10,15 @@ const router = Router();
 
 const ERROR = {
     INVALID_CREDENTIAL: {
-        error: "Incorrect email or password",
+        message: "Incorrect email or password",
         code: "ERR_INVALID_CREDENTIAL"
     },
     USER_NOT_FOUND: {
-        error: "User not found",
+        message: "User not found",
         code: "ERR_NOT_FOUND_RECORD"
     },
     DUPLICATE_EMAIL: { 
-        error: "Email already exist",
+        message: "Email already exist",
         code: "ERR_DUPLICATE_RECORD"
     }
 }
@@ -26,16 +26,16 @@ const ERROR = {
 router.post('/login', validate(loginSchema), async (req, res) => {
     try {
         const { password, email } = req.body;
-    
+  
         const existingUser = await User.findOne({ email });
         if(!existingUser) {
-            return res.json(ERROR.INVALID_CREDENTIAL);
+            return res.status(401).json(ERROR.INVALID_CREDENTIAL);
         }
 
         const isValid = await bcrypt.compare(password, existingUser.password);
 
         if(!isValid) {
-            return res.json({ ...ERROR.INVALID_CREDENTIAL, actualError: 'Incorrect password'});
+            return res.status(401).json({ ...ERROR.INVALID_CREDENTIAL, actualError: 'Incorrect password'});
         }
         const token = jwt.sign({ userId: existingUser._id, user: existingUser.email,  }, process.env.JWT_SECRET_KEY, { 
             expiresIn: '1h'
@@ -48,7 +48,7 @@ router.post('/login', validate(loginSchema), async (req, res) => {
         }).status(200).json({ success: true });
 
     } catch (error) {
-        res.json({ error: true, message: error.message })
+        res.status(401).json({ success: false, message: error.message })
     }
 });
 
@@ -76,4 +76,4 @@ router.post('/signup', validate(registerSchema) ,async (req, res) => {
     }
 });
 
-export default router;
+export { router as authRouter };

@@ -1,9 +1,30 @@
 import axios from "axios";
 
 const axiosInstanse = axios.create({
-  baseURL: "localhost:3000",
+  baseURL: import.meta.env.VITE_BASE_URI,
+  withCredentials: true,
 });
 
-// const login = async ({ email, password }) => {
-//     return axios.post('')
-// };
+// axiosInstanse.interceptors.request.use((a) => {
+//   console.log(a);
+//   return a;
+// });
+
+type Login = {
+  email: string;
+  password: string;
+};
+
+type Signup = Login & { confirmPassword: string };
+
+export const login = async (data: Login) => {
+  return axiosInstanse.post("/auth/login", data);
+};
+
+export const signup = async (data: Signup) => {
+  return axiosInstanse.post("/auth/signup", data);
+};
+
+export const me = async () => {
+  return axiosInstanse.get("/me");
+};

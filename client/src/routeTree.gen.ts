@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteImport } from './routes/_main'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as MainMeRouteImport } from './routes/_main.me'
 import { Route as MainARouteImport } from './routes/_main.a'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
@@ -28,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const MainMeRoute = MainMeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => MainRoute,
 } as any)
 const MainARoute = MainARouteImport.update({
   id: '/a',
@@ -50,12 +56,14 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/a': typeof MainARoute
+  '/me': typeof MainMeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/a': typeof MainARoute
+  '/me': typeof MainMeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -65,12 +73,13 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_main/a': typeof MainARoute
+  '/_main/me': typeof MainMeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/a'
+  fullPaths: '/' | '/login' | '/signup' | '/a' | '/me'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/a'
+  to: '/' | '/login' | '/signup' | '/a' | '/me'
   id:
     | '__root__'
     | '/'
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/signup'
     | '/_main/a'
+    | '/_main/me'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -109,6 +119,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_main/me': {
+      id: '/_main/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MainMeRouteImport
+      parentRoute: typeof MainRoute
     }
     '/_main/a': {
       id: '/_main/a'
@@ -148,10 +165,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MainRouteChildren {
   MainARoute: typeof MainARoute
+  MainMeRoute: typeof MainMeRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
   MainARoute: MainARoute,
+  MainMeRoute: MainMeRoute,
 }
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)

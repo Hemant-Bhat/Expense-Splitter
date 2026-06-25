@@ -1,12 +1,72 @@
-import { Button, Form, Input, Divider, Card, Space } from "antd";
+import axios from "axios";
+import { Button, Form, Input, Divider, Card, Space, App } from "antd";
 import { LinkButton } from "../../components/link";
+import { useMutation } from "@tanstack/react-query";
+import { signup } from "../../services/admin";
+import { useNavigate } from "@tanstack/react-router";
 
 const Signup = () => {
   const [form] = Form.useForm();
-  // const email = Form.useWatch("email", form);
+  const { message } = App.useApp();
+  const navigate = useNavigate();
+
+  const { mutate } = useMutation({
+    mutationFn: signup,
+    mutationKey: ["signup"],
+    onError(error) {
+      if (axios.isAxiosError(error)) {
+        const { status, response } = error;
+
+        if (status == 409) {
+          form.setFields([
+            {
+              name: "email",
+              errors: [response?.data?.message],
+            },
+          ]);
+        } else if (status == 400) {
+          const fieldErrors = response?.data?.fieldErrors || null;
+          if (fieldErrors) {
+            if (Object.keys(fieldErrors).includes("email")) {
+              form.setFields([
+                {
+                  name: "email",
+                  errors: [fieldErrors["email"]],
+                },
+              ]);
+            } else if (Object.keys(fieldErrors).includes("password")) {
+              form.setFields([
+                {
+                  name: "password",
+                  errors: [fieldErrors["password"]],
+                },
+              ]);
+            } else {
+              form.setFields([
+                {
+                  name: "password",
+                  errors: [" "],
+                },
+                {
+                  name: "confirmPassword",
+                  errors: [fieldErrors["confirmPassword"]],
+                },
+              ]);
+            }
+          }
+        }
+      }
+    },
+    onSuccess(response) {
+      const { data } = response;
+      message.success(data?.message, 10);
+      navigate({ to: "/login" });
+    },
+  });
+
   const handleSubmit = () => {
-    form.setFieldsValue({ password: "1111" });
-    form.setFieldValue("email", "hemantbhaqqt");
+    const { email, password, confirmPassword } = form.getFieldsValue();
+    mutate({ email, password, confirmPassword });
   };
 
   return (
@@ -41,7 +101,7 @@ const Signup = () => {
           </Form.Item>
           <Form.Item
             label="Confirm Password"
-            name="cnfPassword"
+            name="confirmPassword"
             rules={[{ required: true, message: "Please enter cofirm password" }]}
           >
             <Input
@@ -56,7 +116,7 @@ const Signup = () => {
                 color="primary"
                 htmlType="submit"
               >
-                Login
+                Sign Up
               </Button>
               <LinkButton
                 to="/login"
