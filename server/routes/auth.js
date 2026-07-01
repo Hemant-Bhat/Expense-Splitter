@@ -37,12 +37,12 @@ router.post('/login', validate(loginSchema), async (req, res) => {
         if(!isValid) {
             return res.status(401).json({ ...ERROR.INVALID_CREDENTIAL, actualError: 'Incorrect password'});
         }
-        const token = jwt.sign({ userId: existingUser._id, user: existingUser.email,  }, process.env.JWT_SECRET_KEY, { 
-            expiresIn: '1h'
+        const token = jwt.sign({ userId: existingUser._id, email: existingUser.email,  }, process.env.JWT_SECRET_KEY, { 
+            expiresIn: '1d'
         })
 
         res.cookie('token', token, { 
-            expires: new Date(Date.now() + 60 * 60 * 1000),
+            expires: new Date(Date.now() + 60 * 60 * 24 * 1000),
             httpOnly: true
 
         }).status(200).json({ success: true });

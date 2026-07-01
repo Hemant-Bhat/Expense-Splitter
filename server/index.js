@@ -9,6 +9,7 @@ import { groupRouter } from "./routes/group.js";
 import { authenticate } from "./middleware/auth.js";
 import Joi from "joi";
 import { formatJoiError } from "./middleware/errorHandler.js";
+import { expenseRouter } from "./routes/expense.js";
 
 
 env.config();
@@ -25,7 +26,9 @@ app.use(cors({
 
 
 app.use('/auth', authRouter);
+
 app.use('/group', authenticate, groupRouter);
+app.use('/expense', authenticate, expenseRouter);
 
 app.get('/', (req, res) => {
     res.status(200).json({
@@ -49,7 +52,7 @@ app.use((err, req, res, next) => {
     return res.status(400).json(formatJoiError(err));
   }
 
-  return err;
+  return res.status(400).json(err);
 //   const statusCode = err.statusCode || 500;
 
 //   // Send a clean, standardized JSON response to the client

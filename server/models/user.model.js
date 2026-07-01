@@ -12,6 +12,11 @@ const userSchema = new Schema({
         type: String,
         required: true
     }
+}, { 
+    timestamps: { 
+        createdAt: true,
+        updatedAt: true,
+    }
 })
 
 const User = model('User', userSchema)

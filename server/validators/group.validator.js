@@ -1,5 +1,6 @@
 import Joi from "joi";
 
 export const groupSchema = Joi.object({
-    name: Joi.string().label('Group name').required().min(3)
+    name: Joi.string().label('Group name').required().min(3),
+    members: Joi.array().items(Joi.string().email()).default([])
 })
