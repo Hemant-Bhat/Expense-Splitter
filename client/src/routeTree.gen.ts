@@ -13,9 +13,11 @@ import { Route as MainRouteImport } from './routes/_main'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MainMeRouteImport } from './routes/_main.me'
+import { Route as MainDashboardRouteImport } from './routes/_main.dashboard'
 import { Route as MainARouteImport } from './routes/_main.a'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
+import { Route as MainGroupGroupIdRouteImport } from './routes/_main.group.$groupId'
 
 const MainRoute = MainRouteImport.update({
   id: '/_main',
@@ -35,6 +37,11 @@ const MainMeRoute = MainMeRouteImport.update({
   path: '/me',
   getParentRoute: () => MainRoute,
 } as any)
+const MainDashboardRoute = MainDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => MainRoute,
+} as any)
 const MainARoute = MainARouteImport.update({
   id: '/a',
   path: '/a',
@@ -50,20 +57,29 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
+const MainGroupGroupIdRoute = MainGroupGroupIdRouteImport.update({
+  id: '/group/$groupId',
+  path: '/group/$groupId',
+  getParentRoute: () => MainRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/a': typeof MainARoute
+  '/dashboard': typeof MainDashboardRoute
   '/me': typeof MainMeRoute
+  '/group/$groupId': typeof MainGroupGroupIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
   '/a': typeof MainARoute
+  '/dashboard': typeof MainDashboardRoute
   '/me': typeof MainMeRoute
+  '/group/$groupId': typeof MainGroupGroupIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -73,13 +89,29 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_main/a': typeof MainARoute
+  '/_main/dashboard': typeof MainDashboardRoute
   '/_main/me': typeof MainMeRoute
+  '/_main/group/$groupId': typeof MainGroupGroupIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/signup' | '/a' | '/me'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/a'
+    | '/dashboard'
+    | '/me'
+    | '/group/$groupId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/signup' | '/a' | '/me'
+  to:
+    | '/'
+    | '/login'
+    | '/signup'
+    | '/a'
+    | '/dashboard'
+    | '/me'
+    | '/group/$groupId'
   id:
     | '__root__'
     | '/'
@@ -88,7 +120,9 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_auth/signup'
     | '/_main/a'
+    | '/_main/dashboard'
     | '/_main/me'
+    | '/_main/group/$groupId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -127,6 +161,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainMeRouteImport
       parentRoute: typeof MainRoute
     }
+    '/_main/dashboard': {
+      id: '/_main/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof MainDashboardRouteImport
+      parentRoute: typeof MainRoute
+    }
     '/_main/a': {
       id: '/_main/a'
       path: '/a'
@@ -148,6 +189,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_main/group/$groupId': {
+      id: '/_main/group/$groupId'
+      path: '/group/$groupId'
+      fullPath: '/group/$groupId'
+      preLoaderRoute: typeof MainGroupGroupIdRouteImport
+      parentRoute: typeof MainRoute
+    }
   }
 }
 
@@ -165,12 +213,16 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MainRouteChildren {
   MainARoute: typeof MainARoute
+  MainDashboardRoute: typeof MainDashboardRoute
   MainMeRoute: typeof MainMeRoute
+  MainGroupGroupIdRoute: typeof MainGroupGroupIdRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
   MainARoute: MainARoute,
+  MainDashboardRoute: MainDashboardRoute,
   MainMeRoute: MainMeRoute,
+  MainGroupGroupIdRoute: MainGroupGroupIdRoute,
 }
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)

@@ -1,30 +1,20 @@
-import axios from "axios";
-
-const axiosInstanse = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URI,
-  withCredentials: true,
-});
-
-// axiosInstanse.interceptors.request.use((a) => {
-//   console.log(a);
-//   return a;
-// });
+import { axiosInstanse } from "./axiosInstance";
 
 type Login = {
-  email: string;
-  password: string;
+    email: string;
+    password: string;
 };
 
 type Signup = Login & { confirmPassword: string };
 
 export const login = async (data: Login) => {
-  return axiosInstanse.post("/auth/login", data);
+    return axiosInstanse.post("/auth/login", data);
 };
 
 export const signup = async (data: Signup) => {
-  return axiosInstanse.post("/auth/signup", data);
+    return axiosInstanse.post("/auth/signup", data);
 };
 
 export const me = async () => {
-  return axiosInstanse.get("/me");
+    return axiosInstanse.get("/me");
 };
