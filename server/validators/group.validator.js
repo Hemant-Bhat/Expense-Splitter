@@ -8,3 +8,8 @@ export const groupSchema = Joi.object({
     //     amount: Joi.number().default(0)
     // })).default([])
 });
+
+export const removeMemberSchema = Joi.object({
+    groupId: Joi.string().required().min(20),
+    members: Joi.array().required().min(1).items(Joi.string().email()),
+});

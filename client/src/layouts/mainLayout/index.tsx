@@ -1,12 +1,25 @@
-import { Layout, Menu, Typography } from "antd";
+import { Button, Layout, Menu, message, Typography } from "antd";
 import { Content, Footer, Header } from "antd/es/layout/layout";
 import type { ReactNode } from "react";
 import { theme } from "antd";
 import { LinkButton } from "../../components/link";
+import { useMutation } from "@tanstack/react-query";
+import { logout } from "../../services/admin";
+import { useNavigate } from "@tanstack/react-router";
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
     const { useToken } = theme;
     const { token } = useToken();
+    const navigate = useNavigate();
+    const { mutate } = useMutation({
+        mutationFn: logout,
+        mutationKey: ["logout"],
+        onSuccess(data) {
+            const response = data?.data;
+            message.success(response.message);
+            navigate({ to: "/login" });
+        },
+    });
 
     return (
         <>
@@ -45,8 +58,17 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
                                 ),
                             },
                         ]}
-                        style={{ minWidth: 0, flex: 1 }}
+                        style={{ minWidth: 0, flex: 1, borderBottom: 0 }}
                     />
+
+                    <Button
+                        htmlType="button"
+                        color="danger"
+                        variant="filled"
+                        onClick={() => mutate()}
+                    >
+                        Logout
+                    </Button>
                 </Header>
                 <Content>{children}</Content>
                 <Footer>

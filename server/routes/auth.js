@@ -1,6 +1,6 @@
 import { Router } from "express";
-import bcrypt from 'bcryptjs';
-import jwt  from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 import User from "../models/user.model.js";
 import { validate } from "../middleware/validate.js";
@@ -11,54 +11,54 @@ const router = Router();
 const ERROR = {
     INVALID_CREDENTIAL: {
         message: "Incorrect email or password",
-        code: "ERR_INVALID_CREDENTIAL"
+        code: "ERR_INVALID_CREDENTIAL",
     },
     USER_NOT_FOUND: {
         message: "User not found",
-        code: "ERR_NOT_FOUND_RECORD"
+        code: "ERR_NOT_FOUND_RECORD",
     },
-    DUPLICATE_EMAIL: { 
+    DUPLICATE_EMAIL: {
         message: "Email already exist",
-        code: "ERR_DUPLICATE_RECORD"
-    }
-}
+        code: "ERR_DUPLICATE_RECORD",
+    },
+};
 
-router.post('/login', validate(loginSchema), async (req, res) => {
+router.post("/login", validate(loginSchema), async (req, res) => {
     try {
         const { password, email } = req.body;
-  
+
         const existingUser = await User.findOne({ email });
-        if(!existingUser) {
+        if (!existingUser) {
             return res.status(401).json(ERROR.INVALID_CREDENTIAL);
         }
 
         const isValid = await bcrypt.compare(password, existingUser.password);
 
-        if(!isValid) {
-            return res.status(401).json({ ...ERROR.INVALID_CREDENTIAL, actualError: 'Incorrect password'});
+        if (!isValid) {
+            return res.status(401).json({ ...ERROR.INVALID_CREDENTIAL, actualError: "Incorrect password" });
         }
-        const token = jwt.sign({ userId: existingUser._id, email: existingUser.email,  }, process.env.JWT_SECRET_KEY, { 
-            expiresIn: '1d'
-        })
+        const token = jwt.sign({ userId: existingUser._id, email: existingUser.email }, process.env.JWT_SECRET_KEY, {
+            expiresIn: "1d",
+        });
 
-        res.cookie('token', token, { 
+        res.cookie("token", token, {
             expires: new Date(Date.now() + 60 * 60 * 24 * 1000),
-            httpOnly: true
-
-        }).status(200).json({ success: true });
-
+            httpOnly: true,
+        })
+            .status(200)
+            .json({ success: true });
     } catch (error) {
-        res.status(401).json({ success: false, message: error.message })
+        res.status(401).json({ success: false, message: error.message });
     }
 });
 
-router.post('/signup', validate(registerSchema) ,async (req, res) => {
+router.post("/signup", validate(registerSchema), async (req, res) => {
     try {
         const { email, password, confirmPassword } = req.body;
 
         const existingUser = await User.findOne({ email });
 
-        if(existingUser){
+        if (existingUser) {
             return res.status(409).json(ERROR.DUPLICATE_EMAIL);
         }
 
@@ -68,10 +68,20 @@ router.post('/signup', validate(registerSchema) ,async (req, res) => {
 
         return res.status(201).json({ success: true, message: "User Created Successfully" });
     } catch (error) {
-        if(error.code == 11000){ // mongo db code for duplicate
-           return res.status(409).json(ERROR.DUPLICATE_EMAIL);
+        if (error.code == 11000) {
+            // mongo db code for duplicate
+            return res.status(409).json(ERROR.DUPLICATE_EMAIL);
         }
 
+        throw error;
+    }
+});
+
+router.post("/logout", (req, res) => {
+    try {
+        res.clearCookie("token");
+        return res.status(200).json({ success: true, message: "Logged out successfully" });
+    } catch (error) {
         throw error;
     }
 });
