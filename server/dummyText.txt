@@ -1,0 +1,14 @@
+◇ injected env (3) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+import.meta.url file:///D:/z_Hemant/Expense-Splitter/server/index.js
+fileURLToPath D:\z_Hemant\Expense-Splitter\server\index.js
+dirname D:\z_Hemant\Expense-Splitter\server
+expense-splitter server listening on port 3000
+DB connected successfully!
+[nodemon] restarting due to changes...
+[nodemon] starting `node index.js`
+◇ injected env (3) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+import.meta.url file:///D:/z_Hemant/Expense-Splitter/server/index.js
+fileURLToPath D:\z_Hemant\Expense-Splitter\server\index.js
+dirname D:\z_Hemant\Expense-Splitter\server
+expense-splitter server listening on port 3000
+DB connected successfully!qqqqqqqqqqqqqqqqqqqqqqqqqqq

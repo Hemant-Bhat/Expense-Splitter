@@ -1,22 +1,32 @@
-import { Button, Layout, Menu, message, Typography } from "antd";
+import { Button, Layout, Menu, Typography } from "antd";
 import { Content, Footer, Header } from "antd/es/layout/layout";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { theme } from "antd";
 import { LinkButton } from "../../components/link";
 import { useMutation } from "@tanstack/react-query";
 import { logout } from "../../services/admin";
 import { useNavigate } from "@tanstack/react-router";
+import { useSocketContext } from "../../providers/SocketProvider";
+import useApp from "antd/es/app/useApp";
 
 const MainLayout = ({ children }: { children: ReactNode }) => {
     const { useToken } = theme;
     const { token } = useToken();
+    const { message } = useApp();
     const navigate = useNavigate();
+    const { socket } = useSocketContext();
+
+    useEffect(() => {
+        socket?.connect();
+    }, []);
+
     const { mutate } = useMutation({
         mutationFn: logout,
         mutationKey: ["logout"],
         onSuccess(data) {
             const response = data?.data;
             message.success(response.message);
+            socket?.disconnect();
             navigate({ to: "/login" });
         },
     });

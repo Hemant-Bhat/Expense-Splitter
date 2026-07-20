@@ -5,6 +5,7 @@ import { groupSchema, removeMemberSchema } from "../validators/group.validator.j
 import User from "../models/user.model.js";
 import { MongooseError } from "mongoose";
 import Expense from "../models/expenses.model.js";
+import { getIo } from "../socket.js";
 
 const router = new Router();
 
@@ -87,6 +88,8 @@ router.post("/:groupId/join", async (req, res) => {
             return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
         }
 
+        getIo().emit("member:added", updatedGroup);
+
         return res.status(200).json({ success: true, message: "Group member(s) added successfully" });
     } catch (error) {
         console.log(error);
@@ -94,46 +97,46 @@ router.post("/:groupId/join", async (req, res) => {
 });
 
 // TO DO: Remove Member
-// router.post("/:groupId/remove", validate(removeMemberSchema), async (req, res) => {
-//     try {
-//         const { groupId, members } = req.body;
+router.post("/:groupId/leave", validate(removeMemberSchema), async (req, res) => {
+    try {
+        const { groupId, members } = req.body;
 
-//         const isExisingGroupWithMemberExist = await Group.findOneAndUpdate(
-//             {
-//                 _id: groupId,
-//                 members: {
-//                     $in: members,
-//                 },
-//             },
-//             {
-//                 $pull: {
-//                     members: {
-//                         $in: members,
-//                     },
-//                 },
-//             },
-//         );
+        const updatedGroup = await Group.findOneAndUpdate(
+            {
+                _id: groupId,
+                members: {
+                    $in: members,
+                },
+            },
+            {
+                $pull: {
+                    members: {
+                        $in: members,
+                    },
+                },
+            },
+        );
 
-//         console.dir(isExisingGroupWithMemberExist);
-//         // if (existingUsers.length !== members.length) {
-//         //     return res.status(404).json({ success: false, ...ERROR.MEMBER_NOT_FOUND });
-//         // }
+        console.dir(updatedGroup);
+        // if (existingUsers.length !== members.length) {
+        //     return res.status(404).json({ success: false, ...ERROR.MEMBER_NOT_FOUND });
+        // }
 
-//         // const updatedGroup = await Group.findByIdAndUpdate(groupId, {
-//         //     $addToSet: {
-//         //         members: { $each: members },
-//         //     },
-//         // });
+        // const updatedGroup = await Group.findByIdAndUpdate(groupId, {
+        //     $addToSet: {
+        //         members: { $each: members },
+        //     },
+        // });
 
-//         // if (!updatedGroup) {
-//         //     return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
-//         // }
+        // if (!updatedGroup) {
+        //     return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
+        // }
 
-//         return res.status(200).json({ success: true, message: "Group member(s) removed successfully" });
-//     } catch (error) {
-//         console.log(error);
-//     }
-// });
+        return res.status(200).json({ success: true, message: "Group member(s) removed successfully" });
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 // Expenses Endpoints
 router.get("/:groupId/expenses", async (req, res) => {

@@ -1,4 +1,4 @@
-import axios from "axios";
+import { isAxiosError } from "axios";
 import { Button, Form, Input, Divider, Card, Space, App, ConfigProvider, theme } from "antd";
 import { LinkButton } from "../../components/link";
 import { useMutation } from "@tanstack/react-query";
@@ -14,7 +14,7 @@ const Signup = () => {
         mutationFn: signup,
         mutationKey: ["signup"],
         onError(error) {
-            if (axios.isAxiosError(error)) {
+            if (isAxiosError(error)) {
                 const { status, response } = error;
 
                 if (status == 409) {

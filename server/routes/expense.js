@@ -3,6 +3,7 @@ import { validate } from "../middleware/validate.js";
 import { expenseSchema } from "../validators/expense.validator.js";
 import Expense from "../models/expenses.model.js";
 import Group from "../models/group.model.js";
+import { getIo } from "../socket.js";
 
 const router = new Router();
 
@@ -61,6 +62,15 @@ router.post("/add", validate(expenseSchema), async (req, res) => {
         const expense = new Expense({ groupId, amount, description, paidBy, participants: participants });
         await expense.save();
 
+        getIo()
+            .to(groupId)
+            .emit("expense:added", {
+                ...expense.$toObject(),
+                paidBy: {
+                    name: user.email,
+                    id: paidBy,
+                },
+            });
         return res.status(200).json({ success: true, message: "Expense added successfuly" });
     } catch (error) {
         throw error;

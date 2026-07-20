@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html style="background: #060606; color: #fff; color-scheme: dark;">
+  <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Socket.IO chat</title>
+    <style>
+      *{ box-sizing: border-box;}
+      body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+      #chat-content { position: relative; margin: 0 auto; max-width: 400px; height: 100vh; border: 1px solid gray }
+      #form { width: 100%; background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: absolute; bottom: 0; left: 0; right: 0; display: flex; flex-direction: column ; box-sizing: border-box; backdrop-filter: blur(10px); }
+      input { background: #2a2a2a; color: #fff; border: none; padding: 0 1rem; flex-grow: 1; border-radius: .5rem; margin: 0.25rem; }
+      input:focus { outline: none; }
+      #form > div {
+        display: flex;
+        height: 3em;
+      }
+      #form button { background: #9428ff; width: 100px; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+      #messages { list-style-type: none; margin: 0; padding: 0; height: calc(100vh - 3em); overflow: auto; }
+      #messages > li { padding: 0.5rem 1rem; }
+      #messages > li:nth-child(odd) { background: #2b2b2b; }
+    </style>
+  </head>
+  <body>
+    <div id="chat-content">
+      <ul id="messages"></ul>
+      <form id="form" action="">
+        <div>
+          <input id="input" autocomplete="off" placeholder="Enter Message"/>
+          <button>Send</button>
+        </div>
+        <div>
+          <input id="room" autocomplete="off"  placeholder="Enter Room"/>
+          <button>Join</button>
+
+        </div>
+      </form>
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        const room = document.getElementById('room');
+        const messages = document.getElementById('messages');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (input.value) {
+            socket.emit('chat message', input.value, room.value);
+            input.value = '';
+            input.focus();
+            }
+        });
+        console.log(socket)
+        socket.on('connect', function() {
+          insertMessage("You connected with id: " + socket.id) 
+          console.log("CONNECTED", socket)
+        })
+
+        socket.on('chat message', (msg) => {
+            insertMessage(msg);
+        });
+
+        function insertMessage(msg) {
+            const item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+            messages.scrollTo(0, messages.scrollHeight);
+        }
+    </script>
+  </body>
+</html>

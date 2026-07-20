@@ -3,14 +3,14 @@ import Login from "../pages/login";
 import { me } from "../services/admin";
 
 export const Route = createFileRoute("/_auth/login")({
-  component: Login,
-  beforeLoad: async () => {
-    try {
-      await me();
-      throw redirect({ to: "/me" });
-    } catch (err) {
-      if (isRedirect(err)) throw err;
-    }
-  },
-  pendingComponent: () => <h1>Loading...</h1>,
+    component: Login,
+    beforeLoad: async () => {
+        try {
+            await me();
+            throw redirect({ to: "/dashboard" });
+        } catch (err) {
+            if (isRedirect(err)) throw err;
+        }
+    },
+    pendingComponent: () => <h1>Loading...</h1>,
 });

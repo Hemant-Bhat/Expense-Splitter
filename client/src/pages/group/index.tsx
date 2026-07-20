@@ -2,15 +2,19 @@ import type React from "react";
 import { useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMembers, getGroup, getGroupExpenses } from "../../services/group";
-import { Button, Divider, Flex, Form, Input, Layout, message, Modal, Popover, Spin, Table, theme, Typography, type ModalProps } from "antd";
+import { Button, Divider, Flex, Form, Input, Layout, Modal, Popover, Spin, Table, theme, Typography, type ModalProps } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import Link from "antd/es/typography/Link";
-import { addExpeses } from "../../services/expense";
+import { addExpenses } from "../../services/expense";
 import { useForm, type FormInstance } from "antd/es/form/Form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GroupForm } from "../../components/GroupForm";
 import { getUsers } from "../../services/user";
+import { useSocketContext } from "../../providers/SocketProvider";
+import { registerGroupEvents } from "../../sockets/group.socket";
+import useApp from "antd/es/app/useApp";
+import { isAxiosError } from "axios";
 
 const Title = Typography.Title;
 const Paragraph = Typography.Paragraph;
@@ -19,11 +23,13 @@ const Group: React.FC = () => {
     const {
         token: { colorBgContainer, colorBorderSecondary },
     } = theme.useToken();
+    const { message, notification } = useApp();
+    const { socket } = useSocketContext();
     const [isExpenseOpen, setIsExpenseOpen] = useState(false);
     const { groupId } = useParams({ from: "/_main/group/$groupId" });
     const queryClient = useQueryClient();
     const { data, isLoading, isError } = useQuery({
-        queryKey: ["groups", groupId],
+        queryKey: ["group", groupId],
         queryFn: () => getGroup(groupId),
         enabled: !!groupId,
     });
@@ -34,17 +40,51 @@ const Group: React.FC = () => {
     });
 
     const { mutate } = useMutation({
-        mutationKey: ["group-expense-add", groupId],
-        mutationFn: addExpeses,
+        mutationFn: addExpenses,
         onSuccess(data) {
-            const response = data?.data;
-            message.success(response?.message);
-            setIsExpenseOpen(true);
-            queryClient.invalidateQueries({
-                queryKey: ["group", "expenses", groupId],
-            });
+            // const response = data?.data;
+            // message.success(response?.message);
+            setIsExpenseOpen(false);
+        },
+        onError(error) {
+            if (isAxiosError(error)) {
+                const response = error.response?.data;
+                const allErrors = Object.values(response?.fieldErrors);
+                message.error(allErrors as string[]);
+            }
         },
     });
+
+    const handleSubmit = (form: FormInstance) => {
+        mutate({ groupId, ...form.getFieldsValue() });
+        form.resetFields();
+    };
+
+    useEffect(() => {
+        if (socket) {
+            const unregister = registerGroupEvents({
+                socket,
+                groupId,
+                handlers: {
+                    onExpenseAdded(data) {
+                        console.log(data);
+                        const paidBy = data?.paidBy;
+                        notification.info({ title: `${paidBy.name} added new expense!` });
+                        queryClient.invalidateQueries({
+                            queryKey: ["group", "expenses", groupId],
+                        });
+                    },
+                    onMemberAdded(value) {
+                        queryClient.invalidateQueries({
+                            queryKey: ["group", groupId],
+                        });
+                    },
+                },
+            });
+
+            return () => unregister();
+        }
+    }, [socket, groupId]);
 
     if (isLoading) {
         return (
@@ -164,7 +204,7 @@ const Group: React.FC = () => {
 
             <AddExpenseForm
                 open={isExpenseOpen}
-                handleOk={(form) => mutate({ groupId, ...form.getFieldsValue() })}
+                handleOk={(form) => handleSubmit(form)}
                 handleCancel={() => setIsExpenseOpen(false)}
             />
         </>
@@ -271,6 +311,7 @@ const AddExpenseForm: React.FC<{
 const AddMemberForm: React.FC<{ groupId: string; groupName: string; members: string[] }> = ({ groupId, groupName, members }) => {
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
+    const { message } = useApp();
 
     const { data } = useQuery({
         queryKey: ["users"],
@@ -279,11 +320,11 @@ const AddMemberForm: React.FC<{ groupId: string; groupName: string; members: str
 
     const { mutateAsync } = useMutation({
         mutationFn: addMembers,
-        mutationKey: ["add-members", groupId],
+        mutationKey: ["group", "members", groupId],
         onSuccess(data) {
             const response = data?.data;
 
-            queryClient.invalidateQueries({ queryKey: ["groups", groupId] });
+            queryClient.invalidateQueries({ queryKey: ["group", groupId] });
             message.success(response.message);
         },
     });
