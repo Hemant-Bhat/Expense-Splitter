@@ -9,6 +9,42 @@ import { useNavigate } from "@tanstack/react-router";
 import { useSocketContext } from "../../providers/SocketProvider";
 import useApp from "antd/es/app/useApp";
 
+const ITEMS = [
+    {
+        key: "me",
+        label: (
+            <LinkButton
+                type="link"
+                to="/me"
+            >
+                Me
+            </LinkButton>
+        ),
+    },
+    {
+        key: "allGroups",
+        label: (
+            <LinkButton
+                type="link"
+                to="/groups/all"
+            >
+                All Groups
+            </LinkButton>
+        ),
+    },
+    {
+        key: "dashboard",
+        label: (
+            <LinkButton
+                type="link"
+                to="/dashboard"
+            >
+                Go to Dashboard
+            </LinkButton>
+        ),
+    },
+];
+
 const MainLayout = ({ children }: { children: ReactNode }) => {
     const { useToken } = theme;
     const { token } = useToken();
@@ -44,30 +80,7 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
 
                     <Menu
                         mode="horizontal"
-                        items={[
-                            {
-                                key: "me",
-                                label: (
-                                    <LinkButton
-                                        type="link"
-                                        to="/me"
-                                    >
-                                        Me
-                                    </LinkButton>
-                                ),
-                            },
-                            {
-                                key: "dashboard",
-                                label: (
-                                    <LinkButton
-                                        type="link"
-                                        to="/dashboard"
-                                    >
-                                        Go to Dashboard
-                                    </LinkButton>
-                                ),
-                            },
-                        ]}
+                        items={ITEMS}
                         style={{ minWidth: 0, flex: 1, borderBottom: 0 }}
                     />
 

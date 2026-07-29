@@ -18,6 +18,7 @@ import { formatJoiError } from "./middleware/errorHandler.js";
 import { expenseRouter } from "./routes/expense.js";
 import { userRouter } from "./routes/user.js";
 import { initSocket } from "./socket.js";
+import { balanceRouter } from "./routes/balance.js";
 
 env.config();
 const PORT = 3000;
@@ -51,6 +52,7 @@ app.get("/socket", (req, res) => {
 app.use("/auth", authRouter);
 app.use("/group", authenticate, groupRouter);
 app.use("/expenses", authenticate, expenseRouter);
+app.use("/balance", authenticate, balanceRouter);
 app.use("/users", userRouter);
 
 app.get("/", (req, res) => {
