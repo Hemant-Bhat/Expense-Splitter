@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { me } from "../../services/admin";
 import { Card, Spin, Typography } from "antd";
 import CardMeta from "antd/es/card/CardMeta";
+import { Route } from "../../routes/_main";
 
 const { Text } = Typography;
 
 const Profile = () => {
-    const { data, isLoading, isError } = useQuery({ queryKey: ["me"], queryFn: me });
+    const { auth } = Route.useRouteContext();
+
+    const { data, isLoading, isError } = useQuery({ queryKey: ["me"], queryFn: auth.me });
     if (isLoading) {
         return <Spin />;
     }

@@ -2,16 +2,18 @@ import { isAxiosError } from "axios";
 import { Button, Form, Input, Divider, Card, Space, App, ConfigProvider, theme } from "antd";
 import { LinkButton } from "../../components/link";
 import { useMutation } from "@tanstack/react-query";
-import { signup } from "../../services/admin";
 import { useNavigate } from "@tanstack/react-router";
+import { Route } from "../../routes/_auth";
 
 const Signup = () => {
+    const { auth } = Route.useRouteContext();
+
     const [form] = Form.useForm();
     const { message } = App.useApp();
     const navigate = useNavigate();
 
     const { mutate } = useMutation({
-        mutationFn: signup,
+        mutationFn: auth.signup,
         mutationKey: ["signup"],
         onError(error) {
             if (isAxiosError(error)) {

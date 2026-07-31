@@ -51,7 +51,12 @@ export const registerGroupEvents = ({ socket, groupId, handlers }: RegisterGroup
     });
 
     return function unregister() {
-        socket.off("expense:added");
+        socket.off<ExpenseEvent>("expense:added");
+        socket.off<ExpenseEvent>("expense:updated");
+        socket.off<ExpenseEvent>("expense:removed");
+        socket.off<MemberEvent>("member:added");
+        // socket.off<MemberEvent>("member:updated");
+        socket.off<MemberEvent>("member:removed");
         leaveGroup(socket, groupId);
     };
 };

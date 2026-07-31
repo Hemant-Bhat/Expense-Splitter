@@ -1,7 +1,29 @@
 import * as React from "react";
-import { Link, Outlet, createRootRoute } from "@tanstack/react-router";
+import { Link, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import type { login, logout, me, signup } from "../services/admin";
 
-export const Route = createRootRoute({
+type RouterContext = {
+    user:
+        | {
+              email: string;
+              userId: string;
+              currency: {
+                  sign: string;
+                  code: string;
+                  country: string;
+                  symbol: string;
+              };
+          }
+        | undefined;
+    auth: {
+        login: typeof login;
+        logout: typeof logout;
+        me: typeof me;
+        signup: typeof signup;
+    };
+};
+
+export const Route = createRootRouteWithContext<RouterContext>()({
     component: RootComponent,
     notFoundComponent: () => (
         <div style={{ color: "#FFF", textAlign: "center", display: "grid", alignItems: "center", justifyContent: "center", height: "100dvh" }}>
@@ -14,6 +36,9 @@ export const Route = createRootRoute({
             </div>
         </div>
     ),
+    // context: {
+    //     user: undefined,
+    // },
 });
 
 function RootComponent() {

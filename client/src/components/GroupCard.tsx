@@ -17,18 +17,18 @@ const GroupCard: React.FC<GroupCardProps> = ({ groupId, name, memberList }) => {
                 title={name}
                 size="small"
                 variant="outlined"
-                style={{ maxWidth: "200px" }}
-                actions={[
+                style={{ maxWidth: "200px", height: 260, overflowY: "auto" }}
+                extra={[
                     <LinkButton
                         to="/group/$groupId"
                         params={{ groupId }}
-                        type="link"
+                        variant="outlined"
+                        size="small"
                     >
-                        Group More Button
+                        More
                     </LinkButton>,
                 ]}
             >
-                {/* <Text type="secondary">Members</Text> */}
                 <Divider
                     size="small"
                     titlePlacement="center"

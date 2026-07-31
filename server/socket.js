@@ -1,4 +1,6 @@
 import { Server } from "socket.io";
+import { parseCookie } from "cookie";
+import { verifyToken } from "./middleware/auth.js";
 
 let io = null;
 
@@ -9,7 +11,34 @@ export const initSocket = (server) => {
         cors: {
             origin: ["http://localhost:5173"],
             methods: ["GET", "POST"],
+            credentials: true,
         },
+    });
+
+    io.use((socket, next) => {
+        const cookieHeaders = socket.handshake.headers.cookie;
+
+        if (!cookieHeaders) {
+            return next(new Error("Unauthorized"));
+        }
+
+        const cookies = parseCookie(cookieHeaders);
+        const token = cookies.token;
+
+        if (!token) {
+            return next(new Error("Unauthorized"));
+        }
+
+        try {
+            const decoded = verifyToken(token);
+
+            // console.log(decoded);
+
+            socket.user = decoded;
+            next();
+        } catch (error) {
+            next(new Error("Invalid token"));
+        }
     });
 
     registerSocketHandler(io);
@@ -18,6 +47,7 @@ export const initSocket = (server) => {
 const registerSocketHandler = (io) => {
     io.on("connection", (socket) => {
         console.log("a user connected", socket.id);
+        socket.join(socket.user.userId);
 
         socket.on("join-room", (id) => socket.join(id));
         socket.on("leave-room", (id) => socket.leave(id));

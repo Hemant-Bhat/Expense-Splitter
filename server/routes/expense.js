@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validate } from "../middleware/validate.js";
-import { expenseSchema } from "../validators/expense.validator.js";
+import { expenseSchema, paySchema } from "../validators/expense.validator.js";
 import Expense from "../models/expenses.model.js";
 import Group from "../models/group.model.js";
 import { getIo } from "../socket.js";
@@ -19,9 +19,9 @@ router.get("/:id", async (req, res) => {
         const { id } = req.params;
         console.log(id);
 
-        const existingGroup = await Group.findById(id);
+        const group = await Group.findById(id);
 
-        if (!existingGroup) {
+        if (!group) {
             return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
         }
 
@@ -43,14 +43,15 @@ router.post("/add", validate(expenseSchema), async (req, res) => {
         const user = req.user;
         const paidBy = user.userId;
 
-        const existingGroup = await Group.findById(groupId);
+        const group = await Group.findById(groupId);
 
-        if (!existingGroup) {
+        if (!group) {
             return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
         }
 
-        const share = amount / existingGroup.members.length;
-        const participants = existingGroup.members
+        const share = Number(amount / group.members.length).toFixed(2);
+        // console.log(Math.round(share) * 100);
+        const participants = group.members
             .filter((member) => member != user.email)
             .map((member) => ({
                 email: member,
@@ -72,6 +73,41 @@ router.post("/add", validate(expenseSchema), async (req, res) => {
                 },
             });
         return res.status(200).json({ success: true, message: "Expense added successfuly" });
+    } catch (error) {
+        throw error;
+    }
+});
+
+router.post("/pay", validate(paySchema), async (req, res) => {
+    try {
+        const { expenseId, amount } = req.body;
+        const userEmail = req.user.email;
+
+        const expense = await Expense.findOne({
+            _id: expenseId,
+            "participants.email": userEmail,
+        }).lean();
+
+        const updatedExpense = await Expense.updateOne(
+            {
+                _id: expenseId,
+                participants: {
+                    $elemMatch: {
+                        email: userEmail,
+                        owes: { $gt: 0 },
+                    },
+                },
+            },
+            {
+                $inc: {
+                    "participants.$.owes": -amount,
+                    "participants.$.paid": amount,
+                },
+            },
+        );
+
+        getIo().to(expense.paidBy.toHexString()).emit("receivable:updated", { payer: userEmail, amount });
+        res.status(200).json(updatedExpense);
     } catch (error) {
         throw error;
     }

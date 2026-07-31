@@ -1,11 +1,10 @@
 import { Button, Layout, Menu, Typography } from "antd";
 import { Content, Footer, Header } from "antd/es/layout/layout";
-import { useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
 import { theme } from "antd";
 import { LinkButton } from "../../components/link";
 import { useMutation } from "@tanstack/react-query";
-import { logout } from "../../services/admin";
-import { useNavigate } from "@tanstack/react-router";
+import { Outlet, useNavigate, useRouteContext } from "@tanstack/react-router";
 import { useSocketContext } from "../../providers/SocketProvider";
 import useApp from "antd/es/app/useApp";
 
@@ -45,19 +44,20 @@ const ITEMS = [
     },
 ];
 
-const MainLayout = ({ children }: { children: ReactNode }) => {
+const MainLayout = () => {
     const { useToken } = theme;
     const { token } = useToken();
     const { message } = useApp();
     const navigate = useNavigate();
     const { socket } = useSocketContext();
+    const { auth, user } = useRouteContext({ from: "/_main" });
 
     useEffect(() => {
         socket?.connect();
     }, []);
 
     const { mutate } = useMutation({
-        mutationFn: logout,
+        mutationFn: auth.logout,
         mutationKey: ["logout"],
         onSuccess(data) {
             const response = data?.data;
@@ -83,7 +83,13 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
                         items={ITEMS}
                         style={{ minWidth: 0, flex: 1, borderBottom: 0 }}
                     />
-
+                    <Typography.Text
+                        title={user.email}
+                        style={{ width: "110px" }}
+                        ellipsis
+                    >
+                        {user.email}
+                    </Typography.Text>
                     <Button
                         htmlType="button"
                         color="danger"
@@ -93,14 +99,11 @@ const MainLayout = ({ children }: { children: ReactNode }) => {
                         Logout
                     </Button>
                 </Header>
-                <Content>{children}</Content>
+                <Content>
+                    <Outlet />
+                </Content>
                 <Footer>
-                    <Typography.Paragraph
-                        strong
-                        style={{ textAlign: "center" }}
-                    >
-                        Footer @ 2026
-                    </Typography.Paragraph>
+                    <Typography.Paragraph style={{ textAlign: "center" }}>All rights reseverd @ 2026</Typography.Paragraph>
                 </Footer>
             </Layout>
         </>

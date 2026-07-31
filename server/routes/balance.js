@@ -7,10 +7,11 @@ const router = new Router();
 
 router.get("/payable", async (req, res) => {
     try {
+        const { email } = req.user;
         const pipeline = [
             {
                 $match: {
-                    "participants.email": req.user.email,
+                    "participants.email": email,
                 },
             },
             {
@@ -20,11 +21,13 @@ router.get("/payable", async (req, res) => {
                             input: "$participants",
                             as: "p",
                             cond: {
-                                $eq: ["$$p.email", req.user.email],
+                                $and: [{ $eq: ["$$p.email", email] }, { $gt: ["$$p.owes", 0] }],
+                                // $gt: ["$$p.owes", 0],
                             },
                         },
                     },
                 },
+                // },
             },
             {
                 $unset: ["participants"],
@@ -91,8 +94,13 @@ router.get("/payable", async (req, res) => {
         ];
 
         const allPaybales = await Expense.aggregate(pipeline);
+        let responseData = allPaybales[0] ?? {
+            totalRecords: 0,
+            totalOwes: 0,
+            expenses: [],
+        };
 
-        res.status(200).json({ success: true, message: "Payable details fetched successfully", data: allPaybales[0] });
+        res.status(200).json({ success: true, message: "Payable details fetched successfully", data: responseData });
     } catch (error) {
         throw error;
     }

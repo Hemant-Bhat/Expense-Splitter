@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import { validate } from "../middleware/validate.js";
 import { loginSchema, registerSchema } from "../validators/user.validator.js";
+import { CURRENCY } from "../constants/currency.js";
 
 const router = Router();
 
@@ -37,7 +38,7 @@ router.post("/login", validate(loginSchema), async (req, res) => {
         if (!isValid) {
             return res.status(401).json({ ...ERROR.INVALID_CREDENTIAL, actualError: "Incorrect password" });
         }
-        const token = jwt.sign({ userId: existingUser._id, email: existingUser.email }, process.env.JWT_SECRET_KEY, {
+        const token = jwt.sign({ userId: existingUser._id, email: existingUser.email, currency: existingUser.currency }, process.env.JWT_SECRET_KEY, {
             expiresIn: "1d",
         });
 
@@ -63,7 +64,7 @@ router.post("/signup", validate(registerSchema), async (req, res) => {
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
-        const user = new User({ email, password: hashPassword });
+        const user = new User({ email, password: hashPassword, currency: { ...CURRENCY.in } });
         await user.save();
 
         return res.status(201).json({ success: true, message: "User Created Successfully" });

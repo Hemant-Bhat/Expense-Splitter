@@ -20,5 +20,16 @@ export const signup = async (data: Signup) => {
 };
 
 export const me = async () => {
-    return axiosInstanse.get("/me");
+    return axiosInstanse.get<{
+        user: {
+            email: string;
+            userId: string;
+            currency: {
+                sign: string;
+                code: string;
+                country: string;
+                symbol: string;
+            };
+        };
+    }>("/me");
 };
