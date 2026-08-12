@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from "recharts";
 import { getMonthlySpendings } from "../../services/analyze";
 import ChartSkeleton from "../../components/ChartSkeleton";
+import EmptyChart from "../../components/EmptyChart";
 
 const MonthlyAnalysis = () => {
     const { data, isLoading } = useQuery({
@@ -38,14 +39,7 @@ const MonthlyAnalysis = () => {
                         />
                     </>
                 ) : (
-                    <text
-                        x="50%"
-                        y="50%"
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                    >
-                        No data available
-                    </text>
+                    <EmptyChart />
                 )}
             </BarChart>
         </ChartSkeleton>

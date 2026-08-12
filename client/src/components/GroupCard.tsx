@@ -20,6 +20,7 @@ const GroupCard: React.FC<GroupCardProps> = ({ groupId, name, memberList }) => {
                 style={{ maxWidth: "200px", height: 260, overflowY: "auto" }}
                 extra={[
                     <LinkButton
+                        key={1}
                         to="/group/$groupId"
                         params={{ groupId }}
                         variant="outlined"

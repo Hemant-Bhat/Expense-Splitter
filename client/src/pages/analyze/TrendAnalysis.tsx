@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LineChart, CartesianGrid, XAxis, YAxis, Line, Tooltip } from "recharts";
 import { getSpendingTrend } from "../../services/analyze";
 import ChartSkeleton from "../../components/ChartSkeleton";
+import EmptyChart from "../../components/EmptyChart";
 
 const TrendAnalysis = () => {
     const { data: trendData, isLoading: trendDataLoading } = useQuery({
@@ -36,14 +37,7 @@ const TrendAnalysis = () => {
                         <Tooltip />
                     </>
                 ) : (
-                    <text
-                        x="50%"
-                        y="50%"
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                    >
-                        No data available
-                    </text>
+                    <EmptyChart />
                 )}
             </LineChart>
         </ChartSkeleton>

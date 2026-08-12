@@ -7,12 +7,7 @@ const ChartSkeleton = ({ type, isLoading, children }: { type: "bar" | "pie" | "l
             {(() => {
                 switch (type) {
                     case "bar":
-                        return (
-                            <BarChartLoading
-                                barCount={5}
-                                legendCount={3}
-                            />
-                        );
+                        return <BarChartLoading />;
                     case "pie":
                         return <PieChartLoading />;
                     case "line":
@@ -39,8 +34,9 @@ const BarChartLoading = ({ barCount = 5, legendCount = 3 }: { barCount?: number;
             align="center"
         >
             <Flex gap={25}>
-                {bars.map((_) => (
+                {bars.map((_, i) => (
                     <Skeleton.Node
+                        key={i}
                         active
                         style={{ height: "250px", width: "50px" }}
                     />
@@ -50,8 +46,9 @@ const BarChartLoading = ({ barCount = 5, legendCount = 3 }: { barCount?: number;
                 gap={10}
                 justify="center"
             >
-                {legends.map((_) => (
+                {legends.map((_, i) => (
                     <Skeleton.Node
+                        key={i}
                         active
                         style={{ height: 20 }}
                     />
@@ -79,8 +76,9 @@ const PieChartLoading = ({ legendCount = 3 }: { legendCount?: number }) => {
                 gap={10}
                 justify="center"
             >
-                {legends.map((_) => (
+                {legends.map((_, i) => (
                     <Skeleton.Node
+                        key={i}
                         active
                         style={{ height: 20 }}
                     />

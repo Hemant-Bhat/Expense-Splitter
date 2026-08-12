@@ -3,6 +3,7 @@ import { PieChart, Pie, Legend, Tooltip } from "recharts";
 import ChartSkeleton from "../../components/ChartSkeleton";
 import { getYearlySpendings } from "../../services/analyze";
 import { getRandomColor } from "../../utils";
+import EmptyChart from "../../components/EmptyChart";
 
 const GroupAnalysis = () => {
     const { data: groupData, isLoading: groupDataLoading } = useQuery({
@@ -42,14 +43,7 @@ const GroupAnalysis = () => {
                         <Legend />
                     </>
                 ) : (
-                    <text
-                        x="50%"
-                        y="50%"
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                    >
-                        No data available
-                    </text>
+                    <EmptyChart />
                 )}
             </PieChart>
         </ChartSkeleton>

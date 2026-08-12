@@ -5,14 +5,17 @@ import TrendAnalysis from "./TrendAnalysis";
 
 const CARDS = [
     {
+        key: "month_spending",
         title: "Monthly Spendings",
         component: <MonthlyAnalysis />,
     },
     {
+        key: "group_spending",
         title: "Group Spendings",
         component: <GroupAnalysis />,
     },
     {
+        key: "last_30_days_trend",
         title: "Last 30 Day(s) Trend",
         component: <TrendAnalysis />,
     },
@@ -26,7 +29,10 @@ const Analyze = () => {
                 style={{ margin: 10 }}
             >
                 {CARDS.map((card) => (
-                    <Col span={12}>
+                    <Col
+                        key={card.key}
+                        span={12}
+                    >
                         <Card
                             size="small"
                             title={card.title}

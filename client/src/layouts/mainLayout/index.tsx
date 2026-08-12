@@ -50,7 +50,7 @@ const ITEMS = [
                 type="link"
                 to="/analyze"
             >
-                Analyze
+                Reports
             </LinkButton>
         ),
     },
