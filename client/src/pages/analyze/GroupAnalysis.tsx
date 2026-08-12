@@ -25,19 +25,32 @@ const GroupAnalysis = () => {
                 style={{ width: "100%", height: "100%", maxHeight: "40vh", aspectRatio: 1.618 }}
                 responsive
             >
-                <Pie
-                    data={pieData}
-                    dataKey="value"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={"40%"}
-                    outerRadius="80%"
-                    fill="#05bc7f"
-                    label
-                    isAnimationActive={true}
-                />
-                <Tooltip />
-                <Legend />
+                {pieData.length > 0 ? (
+                    <>
+                        <Pie
+                            data={pieData}
+                            dataKey="value"
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={"40%"}
+                            outerRadius="80%"
+                            fill="#05bc7f"
+                            label
+                            isAnimationActive={true}
+                        />
+                        <Tooltip />
+                        <Legend />
+                    </>
+                ) : (
+                    <text
+                        x="50%"
+                        y="50%"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                    >
+                        No data available
+                    </text>
+                )}
             </PieChart>
         </ChartSkeleton>
     );

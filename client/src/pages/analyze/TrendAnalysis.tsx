@@ -24,14 +24,27 @@ const TrendAnalysis = () => {
                 responsive
                 barSize={100}
             >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey={"name"} />
-                <YAxis width={"auto"} />
-                <Line
-                    dataKey="value"
-                    fill="#5b55ff"
-                />
-                <Tooltip />
+                {lineData.length > 0 ? (
+                    <>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey={"name"} />
+                        <YAxis width={"auto"} />
+                        <Line
+                            dataKey="value"
+                            fill="#5b55ff"
+                        />
+                        <Tooltip />
+                    </>
+                ) : (
+                    <text
+                        x="50%"
+                        y="50%"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                    >
+                        No data available
+                    </text>
+                )}
             </LineChart>
         </ChartSkeleton>
     );

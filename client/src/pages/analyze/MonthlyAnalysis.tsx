@@ -22,18 +22,31 @@ const MonthlyAnalysis = () => {
                 responsive
                 barSize={100}
             >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey={"name"} />
-                <YAxis width={"auto"} />
-                <Legend />
-                <Tooltip />
-                <Bar
-                    dataKey="value"
-                    name={"Spending"}
-                    fill="#5b55ff"
-                    activeBar={{ fill: "#3d39a5" }}
-                    radius={[10, 10, 0, 0]}
-                />
+                {spendings.length > 0 ? (
+                    <>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey={"name"} />
+                        <YAxis width={"auto"} />
+                        <Legend />
+                        <Tooltip />
+                        <Bar
+                            dataKey="value"
+                            name={"Spending"}
+                            fill="#5b55ff"
+                            activeBar={{ fill: "#3d39a5" }}
+                            radius={[10, 10, 0, 0]}
+                        />
+                    </>
+                ) : (
+                    <text
+                        x="50%"
+                        y="50%"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                    >
+                        No data available
+                    </text>
+                )}
             </BarChart>
         </ChartSkeleton>
     );

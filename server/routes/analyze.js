@@ -208,7 +208,7 @@ router.get("/spendings/trend", async (req, res) => {
                 },
             },
             {
-                $sort: { _id: -1 },
+                $sort: { date: 1 },
             },
             {
                 $project: {
