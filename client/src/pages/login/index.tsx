@@ -41,7 +41,7 @@ const Login = () => {
             }
         },
         onSuccess(_data, _variables, _onMutateResult, _context) {
-            navigate({ to: "/me" });
+            navigate({ to: "/groups/all" });
         },
     });
 

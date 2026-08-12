@@ -4,6 +4,7 @@ type Event<T extends string> = `${T}:${EventPrefix}`;
 
 export type MemberEvent = Event<"member">;
 export type ExpenseEvent = Event<"expense">;
+export type NotificationEvent = Event<"notification">;
 
 // const Prefix = {
 //     Added: "added",

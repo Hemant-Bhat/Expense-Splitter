@@ -180,7 +180,7 @@ router.get("/receivable", async (req, res) => {
                 $group: {
                     _id: "$paidBy",
                     totalRecords: { $count: {} },
-                    totalOwed: { $sum: "$participant.owes" },
+                    totalOwed: { $sum: { $ceil: "$participant.owes" } },
                     receivables: {
                         $push: {
                             _id: "$participant._id",

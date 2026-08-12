@@ -11,3 +11,7 @@ export const getReceivable = () => {
 export const payExpenseAmount = (payload: { expenseId: string; amount: number }) => {
     return axiosInstanse.post("/expenses/pay", payload);
 };
+
+export const notifyToParticipant = (payload: { expenseId: string; participantEmail: string }) => {
+    return axiosInstanse.post("/notification/notify", payload);
+};

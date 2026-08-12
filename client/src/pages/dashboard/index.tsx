@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button, Card, Col, Flex, Form, Input, Modal, Row, Spin, Table, theme, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import { getPayable, getReceivable, payExpenseAmount } from "../../services/balance";
+import { getPayable, getReceivable, notifyToParticipant, payExpenseAmount } from "../../services/balance";
 import type { BaseButtonProps } from "antd/es/button/Button";
 import { useForm } from "antd/es/form/Form";
 import useApp from "antd/es/app/useApp";
@@ -275,6 +275,9 @@ const ReceivableCard: React.FC = () => {
         queryKey: ["receivable"],
         queryFn: getReceivable,
     });
+    const { mutate, isPending } = useMutation({
+        mutationFn: notifyToParticipant,
+    });
     const RECEIVE_COLUMNS = [
         {
             key: "member",
@@ -290,11 +293,12 @@ const ReceivableCard: React.FC = () => {
         {
             key: "action",
             title: "Action",
-            render: () => (
+            render: (value: any) => (
                 <>
                     <Button
                         variant="solid"
                         color="pink"
+                        onClick={() => mutate({ expenseId: value?.expenseId, participantEmail: value?.participant?.email })}
                     >
                         Notify
                     </Button>

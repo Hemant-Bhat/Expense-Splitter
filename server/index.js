@@ -19,6 +19,8 @@ import { expenseRouter } from "./routes/expense.js";
 import { userRouter } from "./routes/user.js";
 import { initSocket } from "./socket.js";
 import { balanceRouter } from "./routes/balance.js";
+import { notificationRouter } from "./routes/notification.js";
+import { analyzeRouter } from "./routes/analyze.js";
 
 env.config();
 const PORT = 3000;
@@ -54,6 +56,8 @@ app.use("/group", authenticate, groupRouter);
 app.use("/expenses", authenticate, expenseRouter);
 app.use("/balance", authenticate, balanceRouter);
 app.use("/users", userRouter);
+app.use("/notification", authenticate, notificationRouter);
+app.use("/analyze", authenticate, analyzeRouter);
 
 app.get("/", (req, res) => {
     res.status(200).json({

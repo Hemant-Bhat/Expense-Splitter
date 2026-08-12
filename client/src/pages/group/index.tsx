@@ -74,7 +74,7 @@ const Group: React.FC = () => {
                             queryKey: ["group", "expenses", groupId],
                         });
                     },
-                    onMemberAdded(value) {
+                    onMemberAdded(_value) {
                         queryClient.invalidateQueries({
                             queryKey: ["group", groupId],
                         });
@@ -107,7 +107,7 @@ const Group: React.FC = () => {
     return (
         <>
             <Layout style={{ padding: "16px" }}>
-                <Header style={{ background: colorBgContainer, padding: "6px 15px" }}>
+                <Header style={{ background: colorBgContainer, padding: "6px 15px", borderRadius: 8 }}>
                     <Title
                         level={4}
                         style={{ marginBottom: 0 }}
@@ -134,10 +134,10 @@ const Group: React.FC = () => {
                 </Header>
                 <Content>
                     <Layout
-                        style={{ marginBlock: 10, background: colorBgContainer }}
+                        style={{ marginBlock: 10 }}
                         hasSider
                     >
-                        <Content style={{ padding: 8 }}>
+                        <Content style={{ padding: 8, background: colorBgContainer, marginRight: 10, borderRadius: 8 }}>
                             <Flex style={{ marginBottom: 8, justifyContent: "end" }}>
                                 <Button
                                     type="primary"
@@ -172,7 +172,7 @@ const Group: React.FC = () => {
                         </Content>
                         <Sider
                             width={300}
-                            style={{ background: colorBgContainer, borderLeft: `1px solid ${colorBorderSecondary}` }}
+                            style={{ background: colorBgContainer, borderLeft: `1px solid ${colorBorderSecondary}`, borderRadius: 8 }}
                         >
                             <Flex style={{ padding: "8px", justifyContent: "space-between", alignItems: "center" }}>
                                 <Title

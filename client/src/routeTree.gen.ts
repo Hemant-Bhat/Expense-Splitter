@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MainMeRouteImport } from './routes/_main.me'
 import { Route as MainDashboardRouteImport } from './routes/_main.dashboard'
+import { Route as MainAnalyzeRouteImport } from './routes/_main.analyze'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
 import { Route as MainGroupsAllRouteImport } from './routes/_main.groups.all'
@@ -42,6 +43,11 @@ const MainDashboardRoute = MainDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => MainRoute,
 } as any)
+const MainAnalyzeRoute = MainAnalyzeRouteImport.update({
+  id: '/analyze',
+  path: '/analyze',
+  getParentRoute: () => MainRoute,
+} as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
+  '/analyze': typeof MainAnalyzeRoute
   '/dashboard': typeof MainDashboardRoute
   '/me': typeof MainMeRoute
   '/group/$groupId': typeof MainGroupGroupIdRoute
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/signup': typeof AuthSignupRoute
+  '/analyze': typeof MainAnalyzeRoute
   '/dashboard': typeof MainDashboardRoute
   '/me': typeof MainMeRoute
   '/group/$groupId': typeof MainGroupGroupIdRoute
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/_main': typeof MainRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/signup': typeof AuthSignupRoute
+  '/_main/analyze': typeof MainAnalyzeRoute
   '/_main/dashboard': typeof MainDashboardRoute
   '/_main/me': typeof MainMeRoute
   '/_main/group/$groupId': typeof MainGroupGroupIdRoute
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/signup'
+    | '/analyze'
     | '/dashboard'
     | '/me'
     | '/group/$groupId'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/signup'
+    | '/analyze'
     | '/dashboard'
     | '/me'
     | '/group/$groupId'
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/_main'
     | '/_auth/login'
     | '/_auth/signup'
+    | '/_main/analyze'
     | '/_main/dashboard'
     | '/_main/me'
     | '/_main/group/$groupId'
@@ -168,6 +180,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainDashboardRouteImport
       parentRoute: typeof MainRoute
     }
+    '/_main/analyze': {
+      id: '/_main/analyze'
+      path: '/analyze'
+      fullPath: '/analyze'
+      preLoaderRoute: typeof MainAnalyzeRouteImport
+      parentRoute: typeof MainRoute
+    }
     '/_auth/signup': {
       id: '/_auth/signup'
       path: '/signup'
@@ -212,6 +231,7 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MainRouteChildren {
+  MainAnalyzeRoute: typeof MainAnalyzeRoute
   MainDashboardRoute: typeof MainDashboardRoute
   MainMeRoute: typeof MainMeRoute
   MainGroupGroupIdRoute: typeof MainGroupGroupIdRoute
@@ -219,6 +239,7 @@ interface MainRouteChildren {
 }
 
 const MainRouteChildren: MainRouteChildren = {
+  MainAnalyzeRoute: MainAnalyzeRoute,
   MainDashboardRoute: MainDashboardRoute,
   MainMeRoute: MainMeRoute,
   MainGroupGroupIdRoute: MainGroupGroupIdRoute,
