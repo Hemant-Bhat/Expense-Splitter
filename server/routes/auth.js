@@ -45,6 +45,7 @@ router.post("/login", validate(loginSchema), async (req, res) => {
         res.cookie("token", token, {
             expires: new Date(Date.now() + 60 * 60 * 24 * 1000),
             httpOnly: true,
+            sameSite: "none",
         })
             .status(200)
             .json({ success: true });
