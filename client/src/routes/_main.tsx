@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import MainLayout from "../layouts/mainLayout";
 
 export const Route = createFileRoute("/_main")({

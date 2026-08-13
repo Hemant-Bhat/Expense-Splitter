@@ -16,6 +16,7 @@ import { useLinkProps, type LinkComponent } from "@tanstack/react-router";
 import { Button } from "antd";
 
 export const LinkButton: LinkComponent<typeof Button> = ({ type, ...rest }) => {
+    // @ts-ignore
     const anchorProps = useLinkProps(rest); // href, onClick, aria-current, etc.
     return (
         <Button

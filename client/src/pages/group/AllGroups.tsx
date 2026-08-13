@@ -27,9 +27,9 @@ const AllGroups = () => {
         },
         onError(error, _variables, _onMutateResult, _context) {
             if (isAxiosError(error)) {
-                const { data } = error?.response;
-                if (data.code == "VALIDATION_ERROR") {
-                    message.error(data.fieldErrors.name);
+                const response = error?.response;
+                if (response?.data.code == "VALIDATION_ERROR") {
+                    message.error(response?.data.fieldErrors.name);
                 }
             }
         },

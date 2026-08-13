@@ -21,8 +21,8 @@ const Dashboard = () => {
 };
 
 const PayableCard: React.FC = () => {
-    const { message, notification } = useApp();
-    const { socket } = useSocketContext();
+    const { message } = useApp();
+    // const { socket } = useSocketContext();
     const {
         user: { currency },
     } = useRouteContext({ from: "/_main" });
@@ -275,7 +275,7 @@ const ReceivableCard: React.FC = () => {
         queryKey: ["receivable"],
         queryFn: getReceivable,
     });
-    const { mutate, isPending } = useMutation({
+    const { mutate } = useMutation({
         mutationFn: notifyToParticipant,
     });
     const RECEIVE_COLUMNS = [

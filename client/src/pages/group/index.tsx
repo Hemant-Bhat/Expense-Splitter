@@ -41,7 +41,7 @@ const Group: React.FC = () => {
 
     const { mutate } = useMutation({
         mutationFn: addExpenses,
-        onSuccess(data) {
+        onSuccess(_data) {
             // const response = data?.data;
             // message.success(response?.message);
             setIsExpenseOpen(false);
@@ -122,7 +122,7 @@ const Group: React.FC = () => {
                             type="secondary"
                             style={{ margin: 0 }}
                         >
-                            Created By: {creator?.email} on {new Date(createdAt).toLocaleDateString()}
+                            Created By: {creator?.email} on {createdAt && new Date(createdAt).toLocaleDateString()}
                         </Paragraph>
                         {/* <Paragraph
                             type="secondary"
@@ -165,7 +165,7 @@ const Group: React.FC = () => {
                                         render: (record, _) => <ParticipantsCell participants={record} />,
                                     },
                                 ]}
-                                rowKey={(e) => e?.id}
+                                rowKey={(e: any) => e?.id}
                                 dataSource={expenseData}
                                 scroll={{ y: 55 * 5 }}
                             />
@@ -336,7 +336,7 @@ const AddMemberForm: React.FC<{ groupId: string; groupName: string; members: str
     };
 
     const response = data?.data;
-    const users = response?.data?.filter((user) => !members.includes(user.email)).map((user) => ({ label: user.email, value: user.email }));
+    const users = response?.data?.filter((user: any) => !members.includes(user.email)).map((user: any) => ({ label: user.email, value: user.email }));
 
     return (
         <>
