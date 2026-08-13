@@ -46,6 +46,7 @@ router.post("/login", validate(loginSchema), async (req, res) => {
             expires: new Date(Date.now() + 60 * 60 * 24 * 1000),
             httpOnly: true,
             sameSite: "none",
+            secure: true,
         })
             .status(200)
             .json({ success: true });
