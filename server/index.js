@@ -59,7 +59,7 @@ app.use("/users", userRouter);
 app.use("/notification", authenticate, notificationRouter);
 app.use("/analyze", authenticate, analyzeRouter);
 
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
     res.status(200).json({
         server: `expense-splitter`,
         status: "healthy",
