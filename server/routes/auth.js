@@ -82,7 +82,10 @@ router.post("/signup", validate(registerSchema), async (req, res) => {
 
 router.post("/logout", (req, res) => {
     try {
-        res.clearCookie("token");
+        res.clearCookie("token", {
+            sameSite: "none",
+            secure: true,
+        });
         return res.status(200).json({ success: true, message: "Logged out successfully" });
     } catch (error) {
         throw error;
