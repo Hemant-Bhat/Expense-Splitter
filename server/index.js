@@ -40,15 +40,15 @@ app.use(e.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "http://localhost:5173", // here server is running
+        origin: process.env.CLIENT_URL, // here server is running
         credentials: true,
     }),
 );
 
 /* Socket.io START */
-app.get("/socket", (req, res) => {
-    return res.sendFile(join(dirname(fileURLToPath(import.meta.url)), "sockets", "index.html"));
-});
+// app.get("/socket", (req, res) => {
+//     return res.sendFile(join(dirname(fileURLToPath(import.meta.url)), "sockets", "index.html"));
+// });
 /* Socket.io END */
 
 app.use("/auth", authRouter);
