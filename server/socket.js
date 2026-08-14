@@ -9,7 +9,7 @@ export const initSocket = (server) => {
         serveClient: true,
         // path: "/chat",
         cors: {
-            origin: ["http://localhost:5173"],
+            origin: [`${process.env.CLIENT_URL}`],
             methods: ["GET", "POST"],
             credentials: true,
         },
