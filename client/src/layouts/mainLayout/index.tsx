@@ -48,7 +48,7 @@ const ITEMS = [
         label: (
             <LinkButton
                 type="link"
-                to="/analyze"
+                to="/reports"
             >
                 Reports
             </LinkButton>

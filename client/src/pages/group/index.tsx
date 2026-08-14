@@ -28,7 +28,7 @@ const Group: React.FC = () => {
     const [isExpenseOpen, setIsExpenseOpen] = useState(false);
     const { groupId } = useParams({ from: "/_main/group/$groupId" });
     const queryClient = useQueryClient();
-    const { data, isLoading, isError } = useQuery({
+    const { data, isLoading, isError, error } = useQuery({
         queryKey: ["group", groupId],
         queryFn: () => getGroup(groupId),
         enabled: !!groupId,
@@ -96,11 +96,27 @@ const Group: React.FC = () => {
     }
 
     if (isError) {
-        return <Paragraph type="danger">Something went wrong</Paragraph>;
+        if (isAxiosError(error)) {
+            const data = error.response?.data;
+            return (
+                <Paragraph
+                    type="danger"
+                    style={{ padding: 20, textAlign: "center" }}
+                >
+                    {data.message}
+                </Paragraph>
+            );
+        } else {
+            return (
+                <Paragraph type="danger">
+                    Something went wrong <pre>{JSON.stringify(error)}</pre>
+                </Paragraph>
+            );
+        }
     }
 
     const response = data?.data;
-    const { id, name, members, createdAt, creator } = response?.data || {};
+    const { name, members, createdAt, creator } = response?.data || {};
     const expenseResponse = groupExpenses?.data;
     const expenseData = expenseResponse?.data;
 
@@ -182,7 +198,7 @@ const Group: React.FC = () => {
                                     Members
                                 </Title>
                                 <AddMemberForm
-                                    groupId={id || ""}
+                                    groupId={groupId}
                                     members={members || []}
                                     groupName={name || ""}
                                 />

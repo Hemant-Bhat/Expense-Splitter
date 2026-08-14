@@ -3,7 +3,7 @@ import Group from "../models/group.model.js";
 import { validate } from "../middleware/validate.js";
 import { groupSchema, removeMemberSchema } from "../validators/group.validator.js";
 import User from "../models/user.model.js";
-import { MongooseError } from "mongoose";
+import { MongooseError, Types } from "mongoose";
 import Expense from "../models/expenses.model.js";
 import { getIo } from "../socket.js";
 
@@ -15,18 +15,18 @@ const ERROR = {
         message: "One or more members do not exist",
     },
     GROUP_NOT_FOUND: {
-        message: "Group does not exist",
+        message: "Group not found",
         code: "ERR_GROUP_NOT_FOUND",
     },
 };
 
 router.get("/", async (req, res) => {
     try {
-        const groups = await Group.find({ $or: [{ creator: { _id: req.user.userId } }, { members: { $in: req.user.email } }] });
+        // const groups = await Group.find({ $or: [{ creator: { _id: req.user.userId } }, { members: { $in: req.user.email } }] });
+        const groups = await Group.find({ members: { $in: req.user.email } });
         return res.status(200).json({ success: true, message: "Groups fetched successfully", data: groups });
-    } catch (err) {
-        console.log(err);
-        throw err;
+    } catch (error) {
+        throw error;
     }
 });
 
@@ -49,21 +49,30 @@ router.post("/create", validate(groupSchema), async (req, res) => {
         await group.save();
 
         return res.status(200).json({ success: true, message: `"${name}" group created successfully` });
-    } catch (err) {
-        console.log("/AAAA/");
-        throw err;
+    } catch (error) {
+        throw error;
     }
 });
 
 router.get("/:groupId", async (req, res) => {
     try {
         const { groupId } = req.params;
+        const email = req.user.email;
 
-        const group = await Group.findById(groupId).populate("creator", { _id: 1, email: 1 });
-        return res.status(200).json({ success: true, message: "Group fetched successfully", data: group });
-    } catch (err) {
-        console.log(err);
-        throw err;
+        const group = await Group.find({
+            _id: new Types.ObjectId(groupId),
+            members: {
+                $in: email,
+            },
+        }).populate("creator", { _id: 1, email: 1 });
+
+        if (!group.length) {
+            return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
+        }
+
+        return res.status(200).json({ success: true, message: "Group fetched successfully", data: group[0] });
+    } catch (error) {
+        throw error;
     }
 });
 
@@ -92,7 +101,7 @@ router.post("/:groupId/join", async (req, res) => {
 
         return res.status(200).json({ success: true, message: "Group member(s) added successfully" });
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 
@@ -117,7 +126,6 @@ router.post("/:groupId/leave", validate(removeMemberSchema), async (req, res) =>
             },
         );
 
-        console.dir(updatedGroup);
         // if (existingUsers.length !== members.length) {
         //     return res.status(404).json({ success: false, ...ERROR.MEMBER_NOT_FOUND });
         // }
@@ -134,7 +142,7 @@ router.post("/:groupId/leave", validate(removeMemberSchema), async (req, res) =>
 
         return res.status(200).json({ success: true, message: "Group member(s) removed successfully" });
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 });
 
@@ -145,9 +153,8 @@ router.get("/:groupId/expenses", async (req, res) => {
 
         const expenses = await Expense.find({ groupId: groupId }).populate("paidBy", { _id: 1, email: 1 });
         return res.status(200).json({ success: true, message: "Group Expenses fetched successfully", data: expenses });
-    } catch (err) {
-        console.log(err);
-        throw err;
+    } catch (error) {
+        throw error;
     }
 });
 
