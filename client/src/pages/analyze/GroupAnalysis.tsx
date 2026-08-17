@@ -4,14 +4,9 @@ import ChartSkeleton from "../../components/ChartSkeleton";
 import { getYearlySpendings } from "../../services/analyze";
 import { getRandomColor } from "../../utils";
 import EmptyChart from "../../components/EmptyChart";
-import { Button } from "antd";
 
 const GroupAnalysis = () => {
-    const {
-        data: groupData,
-        isFetching: groupDataLoading,
-        refetch,
-    } = useQuery({
+    const { data: groupData, isFetching: groupDataLoading } = useQuery({
         queryKey: ["spending", "group"],
         queryFn: () => getYearlySpendings({ year: new Date().getFullYear() }),
     });
