@@ -151,7 +151,49 @@ router.get("/:groupId/expenses", async (req, res) => {
     try {
         const { groupId } = req.params;
 
-        const expenses = await Expense.find({ groupId: groupId }).populate("paidBy", { _id: 1, email: 1 });
+        const expenses = await Expense.aggregate([
+            {
+                $match: {
+                    groupId: new Types.ObjectId(groupId),
+                },
+            },
+            {
+                $set: {
+                    participants: {
+                        $filter: {
+                            input: "$participants",
+                            as: "p",
+                            cond: { $gt: ["$$p.owes", 0] },
+                        },
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    foreignField: "_id",
+                    localField: "paidBy",
+                    as: "paidBy",
+                    pipeline: [
+                        {
+                            $project: {
+                                email: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $project: {
+                    groupId: 1,
+                    amount: 1,
+                    description: 1,
+                    createdAt: 1,
+                    paidBy: { $first: "$paidBy" },
+                    participants: 1,
+                },
+            },
+        ]);
         return res.status(200).json({ success: true, message: "Group Expenses fetched successfully", data: expenses });
     } catch (error) {
         throw error;

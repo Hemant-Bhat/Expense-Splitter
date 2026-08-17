@@ -111,10 +111,22 @@ router.get("/spendings/yearly", async (req, res) => {
             // },
             {
                 $set: {
-                    // When the current user paid, they are not stored in participants.
-                    // Since the expense is split equally, any participant's share
-                    // represents the current user's own share.
-                    userShare: { $first: "$participants.share" },
+                    // a payer also part of participant's with owes: 0 & paid: share.amount
+                    userShare: {
+                        $first: {
+                            $map: {
+                                input: {
+                                    $filter: {
+                                        input: "$participants",
+                                        as: "p",
+                                        cond: { $eq: ["$$p.email", email] },
+                                    },
+                                },
+                                as: "participant",
+                                in: "$$participant.share",
+                            },
+                        },
+                    },
                     participants: {
                         $filter: {
                             input: "$participants",
@@ -135,7 +147,7 @@ router.get("/spendings/yearly", async (req, res) => {
                     },
                     totalCount: { $count: {} },
                     totalGroupSpendings: { $sum: "$userShare" },
-                    groupName: { $first: { $first: "$groupInfo.name" } },
+                    groupName: { $first: { $cond: [{ $first: "$groupInfo.name" }, { $first: "$groupInfo.name" }, "Unknown"] } },
                     groupId: { $first: { $first: "$groupInfo._id" } },
                     spendings: {
                         $push: {

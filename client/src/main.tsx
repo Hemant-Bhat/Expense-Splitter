@@ -20,9 +20,11 @@ createRoot(document.getElementById("root")!).render(
         <SocketProvider>
             <QueryClientProvider client={queryClient}>
                 <ConfigProvider
-                    theme={{
-                        algorithm: theme.darkAlgorithm,
-                    }}
+                    theme={
+                        {
+                            // algorithm: theme.darkAlgorithm,
+                        }
+                    }
                 >
                     <App>
                         <RouterProvider router={router} />

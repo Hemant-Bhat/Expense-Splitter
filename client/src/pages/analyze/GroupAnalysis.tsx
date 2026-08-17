@@ -4,9 +4,14 @@ import ChartSkeleton from "../../components/ChartSkeleton";
 import { getYearlySpendings } from "../../services/analyze";
 import { getRandomColor } from "../../utils";
 import EmptyChart from "../../components/EmptyChart";
+import { Button } from "antd";
 
 const GroupAnalysis = () => {
-    const { data: groupData, isLoading: groupDataLoading } = useQuery({
+    const {
+        data: groupData,
+        isFetching: groupDataLoading,
+        refetch,
+    } = useQuery({
         queryKey: ["spending", "group"],
         queryFn: () => getYearlySpendings({ year: new Date().getFullYear() }),
     });
@@ -18,35 +23,38 @@ const GroupAnalysis = () => {
             fill: getRandomColor(),
         })) || [];
     return (
-        <ChartSkeleton
-            type="pie"
-            isLoading={groupDataLoading}
-        >
-            <PieChart
-                style={{ width: "100%", height: "100%", maxHeight: "40vh", aspectRatio: 1.618 }}
-                responsive
+        <>
+            <Button onClick={() => refetch()}>Refresh</Button>
+            <ChartSkeleton
+                type="pie"
+                isLoading={groupDataLoading}
             >
-                {pieData.length > 0 ? (
-                    <>
-                        <Pie
-                            data={pieData}
-                            dataKey="value"
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={"40%"}
-                            outerRadius="80%"
-                            fill="#05bc7f"
-                            label
-                            isAnimationActive={true}
-                        />
-                        <Tooltip />
-                        <Legend />
-                    </>
-                ) : (
-                    <EmptyChart />
-                )}
-            </PieChart>
-        </ChartSkeleton>
+                <PieChart
+                    style={{ width: "100%", height: "100%", maxHeight: "40vh", aspectRatio: 1.618 }}
+                    responsive
+                >
+                    {pieData.length > 0 ? (
+                        <>
+                            <Pie
+                                data={pieData}
+                                dataKey="value"
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={"40%"}
+                                outerRadius="80%"
+                                fill="#05bc7f"
+                                label
+                                isAnimationActive={true}
+                            />
+                            <Tooltip />
+                            <Legend />
+                        </>
+                    ) : (
+                        <EmptyChart />
+                    )}
+                </PieChart>
+            </ChartSkeleton>
+        </>
     );
 };
 

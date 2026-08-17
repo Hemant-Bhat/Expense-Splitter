@@ -50,15 +50,16 @@ router.post("/add", validate(expenseSchema), async (req, res) => {
         }
 
         const share = Number(amount / group.members.length).toFixed(2);
-        // console.log(Math.round(share) * 100);
-        const participants = group.members
-            .filter((member) => member != user.email)
-            .map((member) => ({
-                email: member,
-                owes: share,
-                paid: 0,
-                share,
-            }));
+
+        // The current user/payer also a participant for the expesnse
+        // Since current user/payer is paying the expense amount,
+        // by default for the current user/payer owes is 0 and paid = share amount
+        const participants = group.members.map((member) => ({
+            email: member,
+            owes: member == user.email ? 0 : share,
+            paid: member == user.email ? share : 0,
+            share,
+        }));
 
         const expense = new Expense({ groupId, amount, description, paidBy, participants: participants });
         await expense.save();
