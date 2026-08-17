@@ -24,7 +24,7 @@ const GroupAnalysis = () => {
         })) || [];
     return (
         <>
-            <Button onClick={() => refetch()}>Refresh</Button>
+            {/* <Button onClick={() => refetch()}>Refresh</Button> */}
             <ChartSkeleton
                 type="pie"
                 isLoading={groupDataLoading}

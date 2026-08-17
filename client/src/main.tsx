@@ -4,7 +4,7 @@ import { RouterProvider } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { router } from "./router";
 import "./main.css";
-import { App, ConfigProvider, theme } from "antd";
+import { App, ConfigProvider } from "antd";
 import { SocketProvider } from "./providers/SocketProvider";
 
 const queryClient = new QueryClient({

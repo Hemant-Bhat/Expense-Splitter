@@ -54,6 +54,7 @@ router.post("/add", validate(expenseSchema), async (req, res) => {
         // The current user/payer also a participant for the expesnse
         // Since current user/payer is paying the expense amount,
         // by default for the current user/payer owes is 0 and paid = share amount
+        // This change help us to calculate the spedings accurately for reports/analysis
         const participants = group.members.map((member) => ({
             email: member,
             owes: member == user.email ? 0 : share,
