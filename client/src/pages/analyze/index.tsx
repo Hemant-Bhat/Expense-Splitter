@@ -31,7 +31,8 @@ const Analyze = () => {
                 {CARDS.map((card) => (
                     <Col
                         key={card.key}
-                        span={12}
+                        md={{ span: 12 }}
+                        xs={{ span: 24 }}
                     >
                         <Card
                             size="small"

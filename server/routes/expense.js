@@ -29,7 +29,7 @@ router.get("/:id", async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: "Group expenses fetched successfully",
+            message: "Expenses details fetched successfully",
             data: expenses,
         });
     } catch (error) {

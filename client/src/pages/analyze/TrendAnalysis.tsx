@@ -3,8 +3,12 @@ import { LineChart, CartesianGrid, XAxis, YAxis, Line, Tooltip } from "recharts"
 import { getSpendingTrend } from "../../services/analyze";
 import ChartSkeleton from "../../components/ChartSkeleton";
 import EmptyChart from "../../components/EmptyChart";
+import { useRouteContext } from "@tanstack/react-router";
+import { theme } from "antd";
 
 const TrendAnalysis = () => {
+    const { user } = useRouteContext({ from: "/_main" });
+    const { token } = theme.useToken();
     const { data: trendData, isLoading: trendDataLoading } = useQuery({
         queryKey: ["spending", "trend"],
         queryFn: getSpendingTrend,
@@ -34,7 +38,25 @@ const TrendAnalysis = () => {
                             dataKey="value"
                             fill="#5b55ff"
                         />
-                        <Tooltip />
+                        <Tooltip
+                            content={({ payload, label }) => {
+                                const firstPayload = payload?.[0];
+                                return (
+                                    <div>
+                                        <p> Date: {label}</p>
+                                        <p>
+                                            Total Amount: {user.currency.symbol} {firstPayload?.value}
+                                        </p>
+                                    </div>
+                                );
+                            }}
+                            wrapperStyle={{
+                                background: token.colorBgBase,
+                                color: token.colorBgSolid,
+                                border: `1px solid ${token.colorBgSolid}`,
+                                padding: 10,
+                            }}
+                        />
                     </>
                 ) : (
                     <EmptyChart />

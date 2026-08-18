@@ -4,8 +4,12 @@ import ChartSkeleton from "../../components/ChartSkeleton";
 import { getYearlySpendings } from "../../services/analyze";
 import { getRandomColor } from "../../utils";
 import EmptyChart from "../../components/EmptyChart";
+import { useRouteContext } from "@tanstack/react-router";
+import { theme } from "antd";
 
 const GroupAnalysis = () => {
+    const { user } = useRouteContext({ from: "/_main" });
+    const { token } = theme.useToken();
     const { data: groupData, isFetching: groupDataLoading } = useQuery({
         queryKey: ["spending", "group"],
         queryFn: () => getYearlySpendings({ year: new Date().getFullYear() }),
@@ -38,10 +42,29 @@ const GroupAnalysis = () => {
                                 innerRadius={"40%"}
                                 outerRadius="80%"
                                 fill="#05bc7f"
-                                label
+                                label={({ value }) => `${user.currency.symbol}${value}`}
                                 isAnimationActive={true}
                             />
-                            <Tooltip />
+                            <Tooltip
+                                content={({ payload }) => {
+                                    const firstPayload = payload?.[0];
+
+                                    return (
+                                        <div>
+                                            <p> Group Name: {firstPayload?.name}</p>
+                                            <p>
+                                                Total Amount: {user.currency.symbol} {firstPayload?.value}
+                                            </p>
+                                        </div>
+                                    );
+                                }}
+                                wrapperStyle={{
+                                    background: token.colorBgBase,
+                                    color: token.colorBgSolid,
+                                    border: `1px solid ${token.colorBgSolid}`,
+                                    padding: 10,
+                                }}
+                            />
                             <Legend />
                         </>
                     ) : (

@@ -27,6 +27,7 @@ const ITEMS = [
             <LinkButton
                 type="link"
                 to="/groups/all"
+                style={{ height: "100%" }}
             >
                 Groups
             </LinkButton>
@@ -38,6 +39,7 @@ const ITEMS = [
             <LinkButton
                 type="link"
                 to="/dashboard"
+                style={{ height: "100%" }}
             >
                 Dashboard
             </LinkButton>
@@ -49,6 +51,7 @@ const ITEMS = [
             <LinkButton
                 type="link"
                 to="/reports"
+                style={{ height: "100%" }}
             >
                 Reports
             </LinkButton>
@@ -109,6 +112,16 @@ const MainLayout = () => {
                         mode="horizontal"
                         items={ITEMS}
                         style={{ minWidth: 0, flex: 1, borderBottom: 0 }}
+                        styles={{
+                            item: {
+                                padding: 0,
+                            },
+                            itemContent: {
+                                height: "100%",
+                                paddingInline: "10px",
+                                display: "inline-block",
+                            },
+                        }}
                     />
                     <Typography.Text
                         title={user.email}

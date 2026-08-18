@@ -29,6 +29,11 @@ const GroupCard: React.FC<GroupCardProps> = ({ groupId, name, memberList }) => {
                         More
                     </LinkButton>,
                 ]}
+                styles={{
+                    title: {
+                        marginRight: 10,
+                    },
+                }}
             >
                 <Divider
                     size="small"

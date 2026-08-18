@@ -1,7 +1,7 @@
 import GroupCard from "../../components/GroupCard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createGroup, getAllGroups } from "../../services/group";
-import { Button, Flex, Space, Spin, Typography, type FormInstance } from "antd";
+import { Button, Empty, Flex, Space, Spin, Typography, type FormInstance } from "antd";
 import { GroupForm } from "../../components/GroupForm";
 import { useState } from "react";
 import { isAxiosError } from "axios";
@@ -55,61 +55,73 @@ const AllGroups = () => {
         mutate(form.getFieldsValue());
     };
 
-    if (isLoading) {
-        return <Spin />;
-    }
-
     if (isError) {
         return <Text type="danger">There was some error !</Text>;
     }
 
     return (
         <>
-            <Flex
-                vertical
-                style={{ padding: 15, alignContent: "center", justifyContent: "end" }}
-            >
-                <Flex style={{ alignContent: "center", justifyContent: "end" }}>
-                    <Button
-                        type="primary"
-                        onClick={() => setOpen(true)}
+            <Spin spinning={isLoading}>
+                {response?.data?.length == 0 ? (
+                    <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description={
+                            <>
+                                <Title
+                                    level={5}
+                                    type="secondary"
+                                    style={{ textAlign: "center", width: "100%" }}
+                                >
+                                    No groups
+                                </Title>
+                                <Button
+                                    variant="solid"
+                                    color="primary"
+                                    onClick={() => setOpen(true)}
+                                >
+                                    Create group
+                                </Button>
+                            </>
+                        }
+                    ></Empty>
+                ) : (
+                    <Flex
+                        vertical
+                        style={{ padding: 15, alignContent: "center", justifyContent: "end" }}
                     >
-                        Create Group
-                    </Button>
-                </Flex>
+                        <Flex style={{ alignContent: "center", justifyContent: "end" }}>
+                            <Button
+                                type="primary"
+                                onClick={() => setOpen(true)}
+                            >
+                                Create Group
+                            </Button>
+                        </Flex>
 
-                <Space
-                    style={{ width: "100%" }}
-                    align="baseline"
-                    wrap
-                >
-                    {response?.data?.map((group: any) => (
-                        <GroupCard
-                            key={group.id}
-                            groupId={group.id}
-                            name={group.name}
-                            memberList={group.members}
-                        />
-                    ))}
-
-                    {response?.data?.length == 0 ? (
-                        <Title
-                            level={4}
-                            type="secondary"
-                            style={{ textAlign: "center", width: "100%" }}
+                        <Space
+                            style={{ width: "100%" }}
+                            align="baseline"
+                            wrap
+                            // orientation="vertical"
                         >
-                            No groups
-                        </Title>
-                    ) : null}
-                </Space>
-            </Flex>
-
-            <GroupForm
-                open={open}
-                onOk={(_e, form) => handleSubmit(form)}
-                onCancel={() => setOpen(false)}
-                users={userList}
-            />
+                            {response?.data?.map((group: any) => (
+                                <GroupCard
+                                    key={group.id}
+                                    groupId={group.id}
+                                    name={group.name}
+                                    memberList={group.members}
+                                />
+                            ))}
+                        </Space>
+                    </Flex>
+                )}
+                <GroupForm
+                    open={open}
+                    onOk={(_e, form) => handleSubmit(form)}
+                    onCancel={() => setOpen(false)}
+                    users={userList}
+                />
+            </Spin>
         </>
     );
 };

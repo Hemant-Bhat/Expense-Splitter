@@ -131,7 +131,7 @@ const PayableCard: React.FC = () => {
                         btnText="Pay All"
                     />
                 }
-                style={{ margin: 10 }}
+                style={{ margin: 12 }}
                 size="middle"
             >
                 <Table
@@ -349,7 +349,7 @@ const ReceivableCard: React.FC = () => {
                         btnColor="pink"
                     />
                 }
-                style={{ margin: 10 }}
+                style={{ margin: 12 }}
                 size="middle"
             >
                 <Table

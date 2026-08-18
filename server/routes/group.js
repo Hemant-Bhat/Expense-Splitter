@@ -158,17 +158,6 @@ router.get("/:groupId/expenses", async (req, res) => {
                 },
             },
             {
-                $set: {
-                    participants: {
-                        $filter: {
-                            input: "$participants",
-                            as: "p",
-                            cond: { $gt: ["$$p.owes", 0] },
-                        },
-                    },
-                },
-            },
-            {
                 $lookup: {
                     from: "users",
                     foreignField: "_id",
@@ -184,12 +173,28 @@ router.get("/:groupId/expenses", async (req, res) => {
                 },
             },
             {
+                $set: {
+                    paidBy: { $first: "$paidBy" },
+                },
+            },
+            {
+                $set: {
+                    participants: {
+                        $filter: {
+                            input: "$participants",
+                            as: "p",
+                            cond: { $ne: ["$$p.email", "$paidBy.email"] },
+                        },
+                    },
+                },
+            },
+            {
                 $project: {
                     groupId: 1,
                     amount: 1,
                     description: 1,
                     createdAt: 1,
-                    paidBy: { $first: "$paidBy" },
+                    paidBy: 1,
                     participants: 1,
                 },
             },

@@ -3,8 +3,12 @@ import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from "rec
 import { getMonthlySpendings } from "../../services/analyze";
 import ChartSkeleton from "../../components/ChartSkeleton";
 import EmptyChart from "../../components/EmptyChart";
+import { useRouteContext } from "@tanstack/react-router";
+import { theme } from "antd";
 
 const MonthlyAnalysis = () => {
+    const { user } = useRouteContext({ from: "/_main" });
+    const { token } = theme.useToken();
     const { data, isLoading } = useQuery({
         queryKey: ["spending", "monthly"],
         queryFn: getMonthlySpendings,
@@ -29,7 +33,25 @@ const MonthlyAnalysis = () => {
                         <XAxis dataKey={"name"} />
                         <YAxis width={"auto"} />
                         <Legend />
-                        <Tooltip />
+                        <Tooltip
+                            content={({ payload, label }) => {
+                                const firstPayload = payload?.[0];
+                                return (
+                                    <div>
+                                        <p> Month: {label}</p>
+                                        <p>
+                                            Total Amount: {user.currency.symbol} {firstPayload?.value}
+                                        </p>
+                                    </div>
+                                );
+                            }}
+                            wrapperStyle={{
+                                background: token.colorBgBase,
+                                color: token.colorBgSolid,
+                                border: `1px solid ${token.colorBgSolid}`,
+                                padding: 10,
+                            }}
+                        />
                         <Bar
                             dataKey="value"
                             name={"Spending"}
