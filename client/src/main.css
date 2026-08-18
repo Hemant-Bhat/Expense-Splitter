@@ -7,3 +7,16 @@
 html {
     color-scheme: dark;
 }
+
+.initilizing *{
+    animation: initilizing-blink infinite alternate 2s;
+}
+
+@keyframes initilizing-blink {
+    0% {
+        color: white;
+    }
+    100%{
+        color: black;
+    }
+}

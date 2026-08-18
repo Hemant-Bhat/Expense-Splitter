@@ -1,5 +1,6 @@
 import { createFileRoute, isRedirect, redirect } from "@tanstack/react-router";
 import AuthLayout from "../layouts/authLayout";
+import { Empty } from "antd";
 
 export const Route = createFileRoute("/_auth")({
     component: AuthLayout,
@@ -11,4 +12,12 @@ export const Route = createFileRoute("/_auth")({
             if (isRedirect(err)) throw err;
         }
     },
+    pendingComponent: () => (
+        <Empty
+            image={false}
+            description={"Initializing...."}
+            className="initilizing"
+            style={{ fontSize: 20 }}
+        />
+    ),
 });
