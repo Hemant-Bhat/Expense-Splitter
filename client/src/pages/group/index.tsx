@@ -181,7 +181,7 @@ const Group: React.FC = () => {
                                         render: (record, _) => <ParticipantsCell participants={record} />,
                                     },
                                 ]}
-                                rowKey={(e: any) => e?.id}
+                                rowKey={(e: any) => e?.expenseId}
                                 dataSource={expenseData}
                                 scroll={{ y: 55 * 5 }}
                             />

@@ -190,6 +190,8 @@ router.get("/:groupId/expenses", async (req, res) => {
             },
             {
                 $project: {
+                    _id: 0,
+                    expenseId: "$_id",
                     groupId: 1,
                     amount: 1,
                     description: 1,
