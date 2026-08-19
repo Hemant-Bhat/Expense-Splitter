@@ -2,7 +2,7 @@ import type React from "react";
 import { useParams } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMembers, getGroup, getGroupExpenses } from "../../services/group";
-import { Button, Divider, Flex, Form, Input, Layout, Modal, Popover, Spin, Table, theme, Typography, type ModalProps } from "antd";
+import { Button, Col, Divider, Flex, Form, Input, Layout, Modal, Popover, Row, Spin, Table, theme, Typography, type ModalProps } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
 import Link from "antd/es/typography/Link";
@@ -122,8 +122,8 @@ const Group: React.FC = () => {
 
     return (
         <>
-            <Layout style={{ padding: "16px" }}>
-                <Header style={{ background: colorBgContainer, padding: "6px 15px", borderRadius: 8 }}>
+            <Layout style={{ padding: 10 }}>
+                <Header style={{ background: colorBgContainer, padding: 8, borderRadius: 8 }}>
                     <Title
                         level={4}
                         style={{ marginBottom: 0 }}
@@ -140,36 +140,40 @@ const Group: React.FC = () => {
                         >
                             Created By: {creator?.email} on {createdAt && new Date(createdAt).toLocaleDateString()}
                         </Paragraph>
-                        {/* <Paragraph
-                            type="secondary"
-                            style={{ margin: 0 }}
-                        >
-                            {id}
-                        </Paragraph> */}
                     </Flex>
                 </Header>
                 <Content>
-                    <Layout
-                        style={{ marginBlock: 10 }}
-                        hasSider
+                    <Row
+                        gutter={[10, 10]}
+                        style={{ marginTop: 10 }}
                     >
-                        <Content style={{ padding: 8, background: colorBgContainer, marginRight: 10, borderRadius: 8 }}>
-                            <Flex style={{ marginBottom: 8, justifyContent: "end" }}>
-                                <Button
-                                    type="primary"
-                                    onClick={() => setIsExpenseOpen(true)}
-                                >
-                                    Add Expense
-                                </Button>
-                            </Flex>
+                        <Col
+                            span={24}
+                            md={16}
+                            lg={18}
+                        >
                             <Table
+                                size="small"
                                 bordered
                                 pagination={false}
+                                scroll={{ y: 55 * 5, x: 600 }}
+                                title={() => (
+                                    <Flex style={{ justifyContent: "space-between", alignItems: "center" }}>
+                                        <Title level={5}>List of expenses</Title>
+                                        <Button
+                                            type="primary"
+                                            onClick={() => setIsExpenseOpen(true)}
+                                        >
+                                            Add Expense
+                                        </Button>
+                                    </Flex>
+                                )}
                                 columns={[
                                     {
                                         key: "paidBy",
                                         title: "Payer",
                                         dataIndex: "paidBy",
+                                        width: 200,
                                         render: (user, _b) => <>{user.email}</>,
                                     },
                                     { key: "amount", title: "Amount", dataIndex: "amount" },
@@ -178,19 +182,27 @@ const Group: React.FC = () => {
                                         key: "participants",
                                         title: "Participants",
                                         dataIndex: "participants",
+                                        width: 200,
                                         render: (record, _) => <ParticipantsCell participants={record} />,
                                     },
                                 ]}
                                 rowKey={(e: any) => e?.expenseId}
                                 dataSource={expenseData}
-                                scroll={{ y: 55 * 5 }}
+                                styles={{
+                                    content: { borderRadius: 10 },
+                                    title: {
+                                        padding: 8,
+                                    },
+                                }}
                             />
-                        </Content>
-                        <Sider
-                            width={300}
-                            style={{ background: colorBgContainer, borderLeft: `1px solid ${colorBorderSecondary}`, borderRadius: 8 }}
+                        </Col>
+                        <Col
+                            span={24}
+                            md={8}
+                            lg={6}
+                            style={{ background: colorBgContainer, borderLeft: `1px solid ${colorBorderSecondary}`, borderRadius: 8, minHeight: 200 }}
                         >
-                            <Flex style={{ padding: "8px", justifyContent: "space-between", alignItems: "center" }}>
+                            <Flex style={{ padding: "8px 4px", justifyContent: "space-between", alignItems: "center" }}>
                                 <Title
                                     level={5}
                                     style={{ margin: 0 }}
@@ -208,13 +220,13 @@ const Group: React.FC = () => {
                                 <Paragraph
                                     ellipsis
                                     key={member}
-                                    style={{ margin: "5px 16px" }}
+                                    style={{ margin: "2px 4px" }}
                                 >
                                     {member}
                                 </Paragraph>
                             ))}
-                        </Sider>
-                    </Layout>
+                        </Col>
+                    </Row>
                 </Content>
             </Layout>
 
@@ -249,25 +261,25 @@ const ParticipantsCell: React.FC<{ participants: any[] }> = ({ participants }) =
                                         title: "Email",
                                         key: "email",
                                         dataIndex: "email",
-                                        width: 300,
+                                        width: 200,
                                     },
                                     {
                                         title: "Share",
                                         key: "share",
                                         dataIndex: "share",
-                                        width: 100,
+                                        width: 90,
                                     },
                                     {
                                         title: "Paid",
                                         key: "paid",
                                         dataIndex: "paid",
-                                        width: 100,
+                                        width: 90,
                                     },
                                     {
                                         title: "Owes",
                                         key: "owes",
                                         dataIndex: "owes",
-                                        width: 100,
+                                        width: 90,
                                     },
                                 ]}
                                 dataSource={participants}
@@ -275,11 +287,18 @@ const ParticipantsCell: React.FC<{ participants: any[] }> = ({ participants }) =
                                 size="small"
                                 bordered
                                 rowKey={(e) => e.id}
-                                scroll={{ y: 55 * 2, x: 400 }}
+                                scroll={{ y: 55 * 2, x: 200 }}
                             />
                         </>
                     }
-                    placement="left"
+                    // placement="left"
+                    styles={{
+                        container: {
+                            maxWidth: 500,
+                            width: "auto",
+                        },
+                    }}
+                    showArrow={false}
                 >
                     <Link>More Info</Link>
                 </Popover>

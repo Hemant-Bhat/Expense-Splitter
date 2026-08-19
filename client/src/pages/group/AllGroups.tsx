@@ -87,7 +87,7 @@ const AllGroups = () => {
                 ) : (
                     <Flex
                         vertical
-                        style={{ padding: 15, alignContent: "center", justifyContent: "end" }}
+                        style={{ padding: 10, alignContent: "center", justifyContent: "end" }}
                     >
                         <Flex style={{ alignContent: "center", justifyContent: "end" }}>
                             <Button
@@ -99,7 +99,7 @@ const AllGroups = () => {
                         </Flex>
 
                         <Space
-                            style={{ width: "100%" }}
+                            style={{ width: "100%", marginTop: 8 }}
                             align="baseline"
                             wrap
                             // orientation="vertical"

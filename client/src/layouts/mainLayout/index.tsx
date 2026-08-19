@@ -100,7 +100,7 @@ const MainLayout = () => {
     return (
         <>
             <Layout style={{ minHeight: "100vh" }}>
-                <Header style={{ position: "sticky", top: 0, zIndex: 1, display: "flex", boxShadow: token.boxShadowTertiary, background: token.colorBgContainer, alignItems: "center" }}>
+                <Header style={{ position: "sticky", top: 0, zIndex: 1, display: "flex", boxShadow: token.boxShadowTertiary, background: token.colorBgContainer, alignItems: "center", padding: 14 }}>
                     <Typography
                         component="h3"
                         style={{ marginBlock: 12, color: "red", fontSize: "2.5rem" }}

@@ -36,6 +36,7 @@ const PayableCard: React.FC = () => {
             key: "paidBy",
             title: "Paid By",
             dataIndex: "paidBy",
+            width: 180,
         },
         { key: "groupName", title: "Group Name", dataIndex: "groupName" },
         { key: "amount", title: "Amount", dataIndex: "amount" },
@@ -133,6 +134,11 @@ const PayableCard: React.FC = () => {
                 }
                 style={{ margin: 12 }}
                 size="middle"
+                styles={{
+                    body: {
+                        padding: 10,
+                    },
+                }}
             >
                 <Table
                     columns={PAYABLE_COLUMNS}
@@ -140,8 +146,9 @@ const PayableCard: React.FC = () => {
                     loading={isLoading}
                     rowKey={"expenseId"}
                     pagination={false}
-                    scroll={{ y: 55 * 5 }}
+                    scroll={{ y: 55 * 5, x: 950 }}
                     bordered
+                    size="small"
                 />
             </Card>
 
@@ -283,6 +290,7 @@ const ReceivableCard: React.FC = () => {
             key: "member",
             title: "Member",
             render: (value: any) => value.participant["email"],
+            width: 180,
         },
         // { key: "groupName", title: "Group Name", dataIndex: "groupName" },
         { key: "amount", title: "Amount", dataIndex: "amount" },
@@ -351,15 +359,21 @@ const ReceivableCard: React.FC = () => {
                 }
                 style={{ margin: 12 }}
                 size="middle"
+                styles={{
+                    body: {
+                        padding: 10,
+                    },
+                }}
             >
                 <Table
                     columns={RECEIVE_COLUMNS}
                     dataSource={receivableData?.receivables || []}
                     loading={isLoading}
                     rowKey={"_id"}
-                    scroll={{ y: 55 * 5 }}
+                    scroll={{ y: 55 * 5, x: 900 }}
                     pagination={false}
                     bordered
+                    size="small"
                 />
             </Card>
         </>
