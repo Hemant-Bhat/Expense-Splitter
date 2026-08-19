@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addMembers, getGroup, getGroupExpenses } from "../../services/group";
 import { Button, Col, Divider, Flex, Form, Input, Layout, Modal, Popover, Row, Spin, Table, theme, Typography, type ModalProps } from "antd";
 import { Content, Header } from "antd/es/layout/layout";
-import Sider from "antd/es/layout/Sider";
 import Link from "antd/es/typography/Link";
 import { addExpenses } from "../../services/expense";
 import { useForm, type FormInstance } from "antd/es/form/Form";
