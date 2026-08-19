@@ -1,5 +1,4 @@
 import e from "express";
-// console.log("HELWPWPWP");
 import { connectDb } from "./db.js";
 import env from "dotenv";
 import cookieParser from "cookie-parser";

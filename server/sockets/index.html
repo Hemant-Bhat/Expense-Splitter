@@ -55,10 +55,10 @@
             input.focus();
             }
         });
-        console.log(socket)
+        // console.log(socket)
         socket.on('connect', function() {
           insertMessage("You connected with id: " + socket.id) 
-          console.log("CONNECTED", socket)
+          // console.log("CONNECTED", socket)
         })
 
         socket.on('chat message', (msg) => {

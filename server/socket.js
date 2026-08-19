@@ -46,14 +46,14 @@ export const initSocket = (server) => {
 
 const registerSocketHandler = (io) => {
     io.on("connection", (socket) => {
-        console.log("a user:", socket.user.userId, "connected with socket:", socket.id);
+        // console.log("a user:", socket.user.userId, "connected with socket:", socket.id);
         socket.join(socket.user.userId);
 
         socket.on("join-group", (id) => socket.join(id));
         socket.on("leave-group", (id) => socket.leave(id));
 
         socket.on("disconnect", () => {
-            console.log("user disconnected", socket.id);
+            // console.log("user disconnected", socket.id);
         });
     });
 };
