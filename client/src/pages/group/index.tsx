@@ -66,7 +66,7 @@ const Group: React.FC = () => {
                 groupId,
                 handlers: {
                     onExpenseAdded(data) {
-                        console.log(data);
+                        // console.log(data);
                         const paidBy = data?.paidBy;
                         notification.info({ title: `${paidBy.name} added new expense!` });
                         queryClient.invalidateQueries({

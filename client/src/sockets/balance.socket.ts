@@ -10,15 +10,15 @@ export const registerBalanceEvents = ({
         onReceivableUpdate?: (data: any) => void;
     };
 }) => {
-    console.log("regitering balance events");
+    // console.log("regitering balance events");
 
     socket.on("payable:updated", (data: any) => {
-        console.log("payable:updated", data);
+        // console.log("payable:updated", data);
         handlers?.onPayableUpdate?.(data);
     });
 
     socket.on("receivable:updated", (data: any) => {
-        console.log("receivable:updated", data);
+        // console.log("receivable:updated", data);
         handlers?.onReceivableUpdate?.(data);
     });
 

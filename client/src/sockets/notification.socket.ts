@@ -10,11 +10,11 @@ export const registerNotificationEvent = ({
         onNotificationUpdate: (value: any) => void;
     };
 }) => {
-    console.log("registering notification events");
+    // console.log("registering notification events");
 
     socket.on<NotificationEvent>("notification:updated", (value) => {
         handlers?.onNotificationUpdate?.(value);
-        console.log("value", value);
+        // console.log("value", value);
     });
     return () => {
         socket.off<NotificationEvent>("notification:updated");

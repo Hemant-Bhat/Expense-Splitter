@@ -7,7 +7,7 @@ const socket = io(import.meta.env.VITE_BASE_URI, {
 });
 
 socket.on("connect", () => {
-    console.log("Socket connected");
+    // console.log("Socket connected");
 });
 
 export { socket };

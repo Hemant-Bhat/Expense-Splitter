@@ -15,12 +15,12 @@ type RegisterGroupEventsParam = {
 };
 export const joinGroup = (socket: Socket, groupId: string) => {
     socket.emit("join-group", `${groupId}`);
-    console.log("Joining group: ", `${groupId}`);
+    // console.log("Joining group: ", `${groupId}`);
 };
 
 export const leaveGroup = (socket: Socket, groupId: string) => {
     socket.emit("leave-group", `${groupId}`);
-    console.log("Leaving group: ", `${groupId}`);
+    // console.log("Leaving group: ", `${groupId}`);
 };
 
 export const registerGroupEvents = ({ socket, groupId, handlers }: RegisterGroupEventsParam): (() => void) => {
