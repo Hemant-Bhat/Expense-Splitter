@@ -4,11 +4,23 @@ import { expenseSchema, paySchema } from "../validators/expense.validator.js";
 import Expense from "../models/expenses.model.js";
 import Group from "../models/group.model.js";
 import { getIo } from "../socket.js";
+import { Types } from "mongoose";
 
 const router = new Router();
 
 const ERROR = {
+    INVALID_EXPENSE: {
+        success: false,
+        message: "Invalid expense",
+        code: "ERR_INVALID_EXPENSE",
+    },
+    INVALID_GROUP: {
+        success: false,
+        message: "Invalid group to add expense",
+        code: "ERR_INVALID_GROUP",
+    },
     GROUP_NOT_FOUND: {
+        success: false,
         message: "Group does not exist",
         code: "ERR_GROUP_NOT_FOUND",
     },
@@ -17,12 +29,12 @@ const ERROR = {
 router.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;
-        // console.log(id);
+        const { email } = req.user;
 
-        const group = await Group.findById(id);
+        const group = await Group.findOne({ _id: id, members: email });
 
         if (!group) {
-            return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
+            return res.status(404).json(ERROR.GROUP_NOT_FOUND);
         }
 
         const expenses = await Expense.find({ groupId: id }).select({ amount: 1, description: 1, paidBy: 1 }).populate("paidBy", { email: 1 });
@@ -39,14 +51,13 @@ router.get("/:id", async (req, res) => {
 
 router.post("/add", validate(expenseSchema), async (req, res) => {
     try {
-        const { groupId, amount, description /* , paidBy */ } = req.body;
-        const user = req.user;
-        const paidBy = user.userId;
+        const { groupId, amount, description } = req.body;
+        const { userId: paidBy, email } = req.user;
 
-        const group = await Group.findById(groupId);
+        const group = await Group.findOne({ _id: new Types.ObjectId(groupId), members: email });
 
         if (!group) {
-            return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
+            return res.status(404).json(ERROR.INVALID_GROUP);
         }
 
         const share = Number(amount / group.members.length).toFixed(2);
@@ -83,19 +94,28 @@ router.post("/add", validate(expenseSchema), async (req, res) => {
 router.post("/pay", validate(paySchema), async (req, res) => {
     try {
         const { expenseId, amount } = req.body;
-        const userEmail = req.user.email;
+        const { email } = req.user;
 
         const expense = await Expense.findOne({
             _id: expenseId,
-            "participants.email": userEmail,
+            participants: {
+                $elemMatch: {
+                    email,
+                    owes: { $gt: 0 },
+                },
+            },
         }).lean();
+
+        if (!expense) {
+            return res.status(404).json(ERROR.INVALID_EXPENSE);
+        }
 
         const updatedExpense = await Expense.updateOne(
             {
-                _id: expenseId,
+                _id: expense._id,
                 participants: {
                     $elemMatch: {
-                        email: userEmail,
+                        email: email,
                         owes: { $gt: 0 },
                     },
                 },
@@ -106,10 +126,14 @@ router.post("/pay", validate(paySchema), async (req, res) => {
                     "participants.$.paid": amount,
                 },
             },
-        );
+        ).lean();
 
-        getIo().to(expense.paidBy.toHexString()).emit("receivable:updated", { payer: userEmail, amount });
-        res.status(200).json(updatedExpense);
+        if (!updatedExpense.modifiedCount) {
+            return res.status(404).json(ERROR.INVALID_EXPENSE);
+        }
+
+        getIo().to(expense.paidBy.toHexString()).emit("receivable:updated", { payer: email, amount });
+        return res.status(200).json({ success: true, messsage: "Expense amount paid successfully" });
     } catch (error) {
         throw error;
     }

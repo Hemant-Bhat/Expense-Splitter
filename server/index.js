@@ -20,6 +20,7 @@ import { initSocket } from "./socket.js";
 import { balanceRouter } from "./routes/balance.js";
 import { notificationRouter } from "./routes/notification.js";
 import { analyzeRouter } from "./routes/analyze.js";
+import mongoose from "mongoose";
 
 env.config();
 const PORT = 3000;
@@ -54,7 +55,7 @@ app.use("/auth", authRouter);
 app.use("/group", authenticate, groupRouter);
 app.use("/expenses", authenticate, expenseRouter);
 app.use("/balance", authenticate, balanceRouter);
-app.use("/users", userRouter);
+app.use("/users", authenticate, userRouter);
 app.use("/notification", authenticate, notificationRouter);
 app.use("/analyze", authenticate, analyzeRouter);
 
@@ -76,6 +77,14 @@ app.use((err, req, res, next) => {
 
     if (Joi.isError(err)) {
         return res.status(400).json(formatJoiError(err));
+    }
+
+    if (err instanceof mongoose.Error) {
+        return res.status(500).json({
+            status: 500,
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Internal Server Error",
+        });
     }
 
     return res.status(400).json(err);

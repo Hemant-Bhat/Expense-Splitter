@@ -1,7 +1,7 @@
 import { Router } from "express";
 import Group from "../models/group.model.js";
 import { validate } from "../middleware/validate.js";
-import { groupSchema, removeMemberSchema } from "../validators/group.validator.js";
+import { addMemberSchema, groupSchema, removeMemberSchema } from "../validators/group.validator.js";
 import User from "../models/user.model.js";
 import { MongooseError, Types } from "mongoose";
 import Expense from "../models/expenses.model.js";
@@ -10,13 +10,25 @@ import { getIo } from "../socket.js";
 const router = new Router();
 
 const ERROR = {
+    INVALID_USER_EMAILS: {
+        success: false,
+        code: "ERR_INVALID_USER_EMAIL",
+        message: "One or more user emails are not exist",
+    },
     MEMBER_NOT_FOUND: {
+        success: false,
         code: "ERR_MEMBER_NOT_FOUND",
         message: "One or more members do not exist",
     },
     GROUP_NOT_FOUND: {
+        success: false,
         message: "Group not found",
         code: "ERR_GROUP_NOT_FOUND",
+    },
+    GROUP_EXPENSES_NOT_FOUND: {
+        success: false,
+        message: "Group expenses not found",
+        code: "ERR_GROUP_EXPENSES_NOT_FOUND",
     },
 };
 
@@ -76,25 +88,29 @@ router.get("/:groupId", async (req, res) => {
     }
 });
 
-router.post("/:groupId/join", async (req, res) => {
+router.post("/:groupId/join", validate(addMemberSchema), async (req, res) => {
     try {
         const { groupId } = req.params;
         const { members } = req.body;
+        const { userId } = req.user;
 
         const existingUsers = await User.find({ email: { $in: members } }).select({ _id: 1 });
 
         if (existingUsers.length !== members.length) {
-            return res.status(404).json({ success: false, ...ERROR.MEMBER_NOT_FOUND });
+            return res.status(404).json(ERROR.INVALID_USER_EMAILS);
         }
 
-        const updatedGroup = await Group.findByIdAndUpdate(groupId, {
-            $addToSet: {
-                members: { $each: members },
+        const updatedGroup = await Group.findOneAndUpdate(
+            { _id: groupId, creator: userId },
+            {
+                $addToSet: {
+                    members: { $each: members },
+                },
             },
-        });
+        );
 
         if (!updatedGroup) {
-            return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
+            return res.status(404).json(ERROR.GROUP_NOT_FOUND);
         }
 
         getIo().emit("member:added", updatedGroup);
@@ -107,49 +123,62 @@ router.post("/:groupId/join", async (req, res) => {
 
 // TO DO: Remove Member
 router.post("/:groupId/leave", validate(removeMemberSchema), async (req, res) => {
-    try {
-        const { groupId, members } = req.body;
+    return res.status(503).json({ success: false, message: "Group leave feature under development" });
+    // try {
+    //     const { groupId, members } = req.body;
 
-        const updatedGroup = await Group.findOneAndUpdate(
-            {
-                _id: groupId,
-                members: {
-                    $in: members,
-                },
-            },
-            {
-                $pull: {
-                    members: {
-                        $in: members,
-                    },
-                },
-            },
-        );
+    //     const updatedGroup = await Group.findOneAndUpdate(
+    //         {
+    //             _id: groupId,
+    //             members: {
+    //                 $in: members,
+    //             },
+    //         },
+    //         {
+    //             $pull: {
+    //                 members: {
+    //                     $in: members,
+    //                 },
+    //             },
+    //         },
+    //     );
 
-        // if (existingUsers.length !== members.length) {
-        //     return res.status(404).json({ success: false, ...ERROR.MEMBER_NOT_FOUND });
-        // }
+    //     // if (existingUsers.length !== members.length) {
+    //     //     return res.status(404).json({ success: false, ...ERROR.MEMBER_NOT_FOUND });
+    //     // }
 
-        // const updatedGroup = await Group.findByIdAndUpdate(groupId, {
-        //     $addToSet: {
-        //         members: { $each: members },
-        //     },
-        // });
+    //     // const updatedGroup = await Group.findByIdAndUpdate(groupId, {
+    //     //     $addToSet: {
+    //     //         members: { $each: members },
+    //     //     },
+    //     // });
 
-        // if (!updatedGroup) {
-        //     return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
-        // }
+    //     // if (!updatedGroup) {
+    //     //     return res.status(404).json({ success: false, ...ERROR.GROUP_NOT_FOUND });
+    //     // }
 
-        return res.status(200).json({ success: true, message: "Group member(s) removed successfully" });
-    } catch (error) {
-        throw error;
-    }
+    //     return res.status(200).json({ success: true, message: "Group member(s) removed successfully" });
+    // } catch (error) {
+    //     throw error;
+    // }
 });
 
 // Expenses Endpoints
 router.get("/:groupId/expenses", async (req, res) => {
     try {
         const { groupId } = req.params;
+        const email = req.user.email;
+
+        const isMember = await Group.findOne({
+            _id: new Types.ObjectId(groupId),
+            members: {
+                $in: [email],
+            },
+        });
+
+        if (!isMember) {
+            return res.status(404).json(ERROR.GROUP_EXPENSES_NOT_FOUND);
+        }
 
         const expenses = await Expense.aggregate([
             {

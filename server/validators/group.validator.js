@@ -9,6 +9,11 @@ export const groupSchema = Joi.object({
     // })).default([])
 });
 
+export const addMemberSchema = Joi.object({
+    // groupId: Joi.string().required().min(20),
+    members: Joi.array().required().min(1).items(Joi.string().email()),
+});
+
 export const removeMemberSchema = Joi.object({
     groupId: Joi.string().required().min(20),
     members: Joi.array().required().min(1).items(Joi.string().email()),
