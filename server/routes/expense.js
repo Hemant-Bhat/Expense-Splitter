@@ -68,8 +68,8 @@ router.post("/add", validate(expenseSchema), async (req, res) => {
         // This change help us to calculate the spedings accurately for reports/analysis
         const participants = group.members.map((member) => ({
             email: member,
-            owes: member == user.email ? 0 : share,
-            paid: member == user.email ? share : 0,
+            owes: member == email ? 0 : share,
+            paid: member == email ? share : 0,
             share,
         }));
 
@@ -81,7 +81,7 @@ router.post("/add", validate(expenseSchema), async (req, res) => {
             .emit("expense:added", {
                 ...expense.$toObject(),
                 paidBy: {
-                    name: user.email,
+                    name: email,
                     id: paidBy,
                 },
             });
